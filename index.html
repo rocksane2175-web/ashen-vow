@@ -51,11 +51,29 @@ kbd{font:11px Cinzel;border:1px solid #77634b;padding:2px 5px;color:#e0cba6;back
 <div id="hud"><div class="bars"><div class="orb" id="hpOrb">♥</div><div class="meterbox"><div class="meterlabel"><span>VITALITY</span><span id="hpText">100 / 100</span></div><div class="meter"><div class="fill hp" id="hpFill"></div></div><div class="meterlabel" style="margin-top:8px"><span>SOUL EXPERIENCE</span><span id="xpText">0 / 100</span></div><div class="meter"><div class="fill xp" id="xpFill" style="width:0%"></div></div></div><div class="orb blue">✧</div></div></div>
 <div id="overlay"><div class="panel"><div class="eyebrow">A GOTHIC ACTION RPG PROTOTYPE</div><div class="title">ASHEN VOW</div><div class="rule"></div><p class="desc">Unutulmuş bir katedralin küllerinde uyandın. Tırpanını kuşan, lanetlileri biç ve ruhunu geri kazan.</p><button class="btn" id="start">KARANLIĞA GİR</button><div class="small">WASD ile hareket · Fare ile yönel ve saldır · SPACE ile kaçın<br>Bu prototip masaüstü tarayıcılar için tasarlanmıştır.</div></div></div>
 <div id="levelup"><div class="panel"><div class="eyebrow">A NEW SIN, A NEW GIFT</div><div class="title" style="font-size:32px">RUHUN GÜÇLENİYOR</div><p class="desc">Bir kutsama seç.</p><div class="choices" id="choices"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
 (()=>{
-const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const canvas=document.getElementById('game');
 let W=innerWidth,H=innerHeight,dpr=Math.min(devicePixelRatio||1,2);
-function resize(){W=innerWidth;H=innerHeight;canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+renderer.setPixelRatio(dpr);renderer.setSize(W,H);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x090a10);scene.fog=new THREE.FogExp2(0x090a10,.012);
+const camera=new THREE.PerspectiveCamera(48,W/H,.1,900);camera.position.set(0,29,28);
+const hemi=new THREE.HemisphereLight(0x8996ad,0x21151a,1.2);scene.add(hemi);
+const moon=new THREE.DirectionalLight(0x9eabc4,2.2);moon.position.set(-25,45,-20);moon.castShadow=true;moon.shadow.mapSize.set(2048,2048);moon.shadow.camera.left=-55;moon.shadow.camera.right=55;moon.shadow.camera.top=55;moon.shadow.camera.bottom=-55;scene.add(moon);
+const fireLight=new THREE.PointLight(0xff8b43,2.4,28);scene.add(fireLight);
+const groundMat=new THREE.MeshStandardMaterial({color:0x25242a,roughness:.96});
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(1200,1200),groundMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.12;ground.receiveShadow=true;scene.add(ground);
+const grid=new THREE.GridHelper(1200,120,0x51454a,0x302c33);grid.position.y=-.1;grid.material.opacity=.32;grid.material.transparent=true;scene.add(grid);
+const worldProps=new THREE.Group();scene.add(worldProps);
+const stoneMats=[0x343039,0x292830,0x403840,0x24242c].map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.9}));
+function addPillar(x,z,h=8){const g=new THREE.Group();const mat=stoneMats[Math.floor(Math.random()*stoneMats.length)];const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.65,.9,h,6),mat);shaft.position.y=h/2;shaft.castShadow=true;shaft.receiveShadow=true;g.add(shaft);const cap=new THREE.Mesh(new THREE.BoxGeometry(2.2,.55,2.2),stoneMats[2]);cap.position.y=h+.1;cap.castShadow=true;g.add(cap);const base=new THREE.Mesh(new THREE.BoxGeometry(2.3,.45,2.3),stoneMats[1]);base.position.y=.2;g.add(base);g.position.set(x,0,z);worldProps.add(g)}
+function addRuins(){for(let i=0;i<70;i++){let a=Math.random()*Math.PI*2,r=rand(28,125),x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.abs(x)<18&&Math.abs(z)<18)continue;if(i%3===0)addPillar(x,z,rand(4,12));else{const b=new THREE.Mesh(new THREE.BoxGeometry(rand(1,4),rand(.5,2.5),rand(1,3)),stoneMats[Math.floor(Math.random()*4)]);b.position.set(x, b.geometry.parameters.height/2,z);b.rotation.y=rand(0,Math.PI);b.castShadow=true;b.receiveShadow=true;worldProps.add(b)}}}
+addRuins();
+const candleGroup=new THREE.Group();scene.add(candleGroup);
+for(let i=0;i<18;i++){let a=i*Math.PI*2/18,x=Math.cos(a)*17,z=Math.sin(a)*17;const stand=new THREE.Mesh(new THREE.CylinderGeometry(.18,.28,1.4,7),stoneMats[2]);stand.position.set(x,.7,z);stand.castShadow=true;candleGroup.add(stand);const flame=new THREE.Mesh(new THREE.SphereGeometry(.16,8,8),new THREE.MeshBasicMaterial({color:0xffa34f}));flame.position.set(x,1.55,z);candleGroup.add(flame)}
+function resize(){W=innerWidth;H=innerHeight;renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.setSize(W,H);camera.aspect=W/H;camera.updateProjectionMatrix()}
 addEventListener('resize',resize);resize();
 const keys={},mouse={x:W/2+100,y:H/2,down:false};
 addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ShiftLeft','ShiftRight'].includes(e.code))e.preventDefault()});
@@ -90,39 +108,34 @@ if(kills>=wave*12){wave++;say('DALGA '+wave+'  ·  LANET DERİNLEŞİYOR')}
 collectLoot();
 let bossNow=enemies.find(e=>e.boss);if(bossNow){ui('bossbar').style.display='block';ui('bosshpfill').style.width=(bossNow.hp/bossNow.max*100)+'%'}else ui('bossbar').style.display='none';enemies.forEach(e=>{e.hit=Math.max(0,e.hit-dt);let dx=player.x-e.x,dy=player.y-e.y,l=Math.hypot(dx,dy)||1;e.x+=dx/l*e.speed*dt;e.y+=dy/l*e.speed*dt;if(l<player.r+e.r+2&&player.inv<=0){player.hp-=e.damage*dt;shake=3;if(player.hp<=0){player.hp=0;gameOn=false;ui('overlay').style.display='flex';ui('overlay').querySelector('.eyebrow').textContent='YOUR PENANCE IS NOT OVER';ui('overlay').querySelector('.title').textContent='YOU HAVE FALLEN';ui('overlay').querySelector('.desc').textContent='Lanetliler seni yuttu. '+kills+' ruh topladın, '+level+'. seviyeye ulaştın.';ui('start').textContent='YENİDEN DENE'}}});
 particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.96;p.vy*=.96;p.life-=dt});particles=particles.filter(p=>p.life>0);shake=Math.max(0,shake-dt*12);if(xp>=xpNeed)levelUp();updateHud()}
-function draw(){ctx.clearRect(0,0,W,H);if(!player)return;let ox=W/2-player.x,oy=H/2-player.y;ctx.save();ctx.translate(W/2,H/2);ctx.rotate(Math.PI/4);ctx.scale(1,.58);ctx.translate(-player.x,-player.y);
-let tile=112;let sx=Math.floor((player.x-W)/tile)*tile,ex=player.x+W,sy=Math.floor((player.y-H)/tile)*tile,ey=player.y+H;
-ctx.fillStyle='#0d0e13';ctx.fillRect(sx,sy,ex-sx,ey-sy);
-for(let x=sx;x<ex;x+=tile)for(let y=sy;y<ey;y+=tile){ctx.fillStyle=((x/tile+y/tile)%2===0)?'#111219':'#0e1016';ctx.fillRect(x,y,tile-1,tile-1);ctx.strokeStyle='#24232a';ctx.globalAlpha=.45;ctx.strokeRect(x+5,y+5,tile-11,tile-11);ctx.globalAlpha=1;if(((Math.floor(x/tile)+Math.floor(y/tile))%5)===0){ctx.strokeStyle='#28252b';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+tile*.5,y+tile*.18);ctx.lineTo(x+tile*.5,y+tile*.82);ctx.moveTo(x+tile*.18,y+tile*.5);ctx.lineTo(x+tile*.82,y+tile*.5);ctx.stroke()}
-if(((Math.floor(x/tile)*7+Math.floor(y/tile)*3)%11)===0){ctx.fillStyle='#211f26';ctx.fillRect(x+tile*.12,y+tile*.12,8,8);ctx.fillStyle='#08090d';ctx.fillRect(x+tile*.12+2,y+tile*.12+2,4,4)}}
-decals.forEach(d=>{ctx.fillStyle=`rgba(75,12,24,${d.a})`;ctx.beginPath();ctx.ellipse(d.x,d.y,d.r,d.r*.55,rand(0,1),0,Math.PI*2);ctx.fill()});
- // distant cathedral silhouettes
-for(let i=-3;i<4;i++){let x=player.x+i*330+90,yy=player.y-420;ctx.fillStyle='#08090e';ctx.fillRect(x,yy+45,30,250);ctx.fillRect(x-9,yy+35,48,15);ctx.beginPath();ctx.moveTo(x-16,yy+48);ctx.lineTo(x+15,yy-28);ctx.lineTo(x+46,yy+48);ctx.fill();ctx.fillStyle='#171820';ctx.fillRect(x+9,yy+95,3,100);ctx.fillStyle='#5c4b40';ctx.fillRect(x-3,yy+43,3,220)}
-enemies.forEach(e=>{ctx.save();ctx.translate(e.x,e.y);ctx.shadowBlur=18;ctx.shadowColor=e.kind==='wraith'?'#6687a9':'#721b27';ctx.fillStyle=e.hit>0?'#d5dce0':e.boss?'#5b3030':e.kind==='wraith'?'#536174':'#34252a';ctx.beginPath();ctx.ellipse(0,2,e.r*.72,e.r*1.15,0,0,Math.PI*2);ctx.fill();if(e.boss){ctx.strokeStyle='#b38b58';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-e.r,-e.r*.6);ctx.lineTo(-e.r*1.2,-e.r*1.5);ctx.lineTo(-e.r*.35,-e.r*1.05);ctx.moveTo(e.r,-e.r*.6);ctx.lineTo(e.r*1.2,-e.r*1.5);ctx.lineTo(e.r*.35,-e.r*1.05);ctx.stroke();}ctx.fillStyle='#0b0b10';ctx.beginPath();ctx.arc(0,-e.r*.55,e.r*.52,0,Math.PI*2);ctx.fill();ctx.fillStyle=e.boss?'#f1b75d':'#bd4651';ctx.fillRect(-5,-e.r*.65,3,2);ctx.fillRect(3,-e.r*.65,3,2);ctx.shadowBlur=0;if(e.hp<e.max){ctx.fillStyle='#1a1115';ctx.fillRect(-e.r,-e.r-10,e.r*2,3);ctx.fillStyle=e.boss?'#d4a45d':'#9d3039';ctx.fillRect(-e.r,-e.r-10,e.r*2*e.hp/e.max,3)}ctx.restore()});
- // player and animated scythe
-let aim=Math.atan2(mouse.y-H/2,mouse.x-W/2);ctx.save();ctx.translate(player.x,player.y);ctx.rotate(aim);ctx.globalAlpha=player.inv>0?.55:1;
-let stride=Math.sin(player.walkPhase),walkBob=Math.abs(stride)*2.4*player.moveAmount+Math.sin(gameTime*2.2)*.7;
-let legSwing=stride*8*player.moveAmount,armSwing=-stride*5*player.moveAmount;
-ctx.fillStyle='rgba(0,0,0,.62)';ctx.beginPath();ctx.ellipse(0,22,29,13,0,0,Math.PI*2);ctx.fill();
-ctx.lineCap='round';ctx.lineJoin='round';
-ctx.strokeStyle='#09090d';ctx.lineWidth=11;ctx.beginPath();ctx.moveTo(-9,10+walkBob);ctx.lineTo(-12+legSwing,27+walkBob);ctx.moveTo(9,10+walkBob);ctx.lineTo(12-legSwing,27+walkBob);ctx.stroke();
-ctx.strokeStyle='#51434a';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(-12+legSwing,26+walkBob);ctx.lineTo(-17+legSwing,30+walkBob);ctx.moveTo(12-legSwing,26+walkBob);ctx.lineTo(17-legSwing,30+walkBob);ctx.stroke();
-ctx.fillStyle='#100e14';ctx.beginPath();ctx.moveTo(-17,-13+walkBob);ctx.lineTo(-22,4+walkBob);ctx.lineTo(-27,25+walkBob);ctx.quadraticCurveTo(0,34+walkBob,27,25+walkBob);ctx.lineTo(22,4+walkBob);ctx.lineTo(17,-13+walkBob);ctx.closePath();ctx.fill();
-ctx.fillStyle='#342b32';ctx.beginPath();ctx.moveTo(-15,-17+walkBob);ctx.lineTo(-23,-7+walkBob);ctx.lineTo(-25,12+walkBob);ctx.quadraticCurveTo(0,25+walkBob,25,12+walkBob);ctx.lineTo(23,-7+walkBob);ctx.lineTo(15,-17+walkBob);ctx.closePath();ctx.fill();
-ctx.fillStyle='#51414a';ctx.beginPath();ctx.moveTo(-19,-13+walkBob);ctx.lineTo(-28,-5+walkBob);ctx.lineTo(-24,5+walkBob);ctx.lineTo(-12,1+walkBob);ctx.fill();ctx.beginPath();ctx.moveTo(19,-13+walkBob);ctx.lineTo(28,-5+walkBob);ctx.lineTo(24,5+walkBob);ctx.lineTo(12,1+walkBob);ctx.fill();
-ctx.strokeStyle='#17151b';ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(-19,-7+walkBob);ctx.lineTo(-23+armSwing,8+walkBob);ctx.moveTo(19,-7+walkBob);ctx.lineTo(24-armSwing,7+walkBob);ctx.stroke();
-ctx.strokeStyle='#79634f';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-23+armSwing,7+walkBob);ctx.lineTo(-25+armSwing,13+walkBob);ctx.moveTo(24-armSwing,6+walkBob);ctx.lineTo(26-armSwing,12+walkBob);ctx.stroke();
-ctx.fillStyle='#17151a';ctx.beginPath();ctx.moveTo(-12,-15+walkBob);ctx.lineTo(12,-15+walkBob);ctx.lineTo(16,8+walkBob);ctx.quadraticCurveTo(0,17+walkBob,-16,8+walkBob);ctx.closePath();ctx.fill();
-ctx.strokeStyle='#8b7458';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-11,-9+walkBob);ctx.lineTo(0,4+walkBob);ctx.lineTo(11,-9+walkBob);ctx.stroke();
-ctx.fillStyle='#b69a70';ctx.fillRect(-5,8+walkBob,10,4);
-ctx.fillStyle='#c4b4a6';ctx.beginPath();ctx.arc(0,-18,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17141a';ctx.beginPath();ctx.moveTo(-9,-20);ctx.lineTo(0,-36);ctx.lineTo(10,-20);ctx.lineTo(6,-14);ctx.lineTo(-8,-14);ctx.fill();
-ctx.strokeStyle='#9d896e';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(7,-5);ctx.lineTo(38,12);ctx.stroke();ctx.strokeStyle='#a9b9c5';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(38,12);ctx.quadraticCurveTo(70,7,76,-22);ctx.quadraticCurveTo(51,-1,38,12);ctx.stroke();
-ctx.restore();
-if(attack>0){ctx.save();ctx.translate(player.x,player.y);ctx.rotate(aim);ctx.strokeStyle='rgba(173,198,212,'+(attack/.42*.6)+')';ctx.lineWidth=4;ctx.shadowBlur=18;ctx.shadowColor='#a4c3d5';ctx.beginPath();ctx.arc(0,0,player.range*.72,-.8,.8);ctx.stroke();ctx.restore()}
-particles.forEach(p=>{ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1});
-ctx.restore();
- // screen-space subtle grain and dark edges
-let g=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.18,W/2,H/2,Math.max(W,H)*.7);g.addColorStop(0,'transparent');g.addColorStop(1,'rgba(0,0,0,.55)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+const actorMeshes=new Map();
+function makeWarrior(isBoss=false,isPlayer=false){
+ const root=new THREE.Group(),armor=new THREE.MeshStandardMaterial({color:isPlayer?0x34303a:isBoss?0x4b252b:0x393038,metalness:.55,roughness:.48}),trim=new THREE.MeshStandardMaterial({color:0x9c8058,metalness:.72,roughness:.34}),cloth=new THREE.MeshStandardMaterial({color:isPlayer?0x17131b:0x24191f,roughness:1}),skin=new THREE.MeshStandardMaterial({color:0xb4a49a,roughness:.8}),glow=new THREE.MeshStandardMaterial({color:isBoss?0xffb64d:0xb94c59,emissive:isBoss?0x9b3c13:0x6d101c,emissiveIntensity:2});
+ const torso=new THREE.Mesh(new THREE.CapsuleGeometry(isPlayer?.58:.48,1.05,5,8),armor);torso.position.y=1.65;torso.castShadow=true;root.add(torso);
+ const cloak=new THREE.Mesh(new THREE.ConeGeometry(isPlayer?1.05:.72,2.2,7),cloth);cloak.position.set(0,1.15,-.28);cloak.rotation.x=.12;cloak.castShadow=true;root.add(cloak);
+ const hood=new THREE.Mesh(new THREE.SphereGeometry(.48,10,8),cloth);hood.scale.set(1,1.12,.92);hood.position.y=2.72;hood.castShadow=true;root.add(hood);
+ const face=new THREE.Mesh(new THREE.SphereGeometry(.29,10,8),skin);face.position.set(0,2.58,.28);root.add(face);
+ const eye1=new THREE.Mesh(new THREE.SphereGeometry(.055,8,8),glow),eye2=eye1.clone();eye1.position.set(-.12,2.63,.54);eye2.position.set(.12,2.63,.54);root.add(eye1,eye2);
+ const shoulders=[];for(const side of [-1,1]){const sh=new THREE.Mesh(new THREE.SphereGeometry(.48,8,7),armor);sh.scale.set(1,.7,.85);sh.position.set(side*.72,2.15,0);sh.castShadow=true;root.add(sh);const rivet=new THREE.Mesh(new THREE.SphereGeometry(.12,8,8),trim);rivet.position.set(side*.82,2.35,.22);root.add(rivet);const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.2,.72,4,7),armor);arm.position.set(side*.86,1.55,.08);arm.rotation.z=side*.22;arm.castShadow=true;root.add(arm);shoulders.push(arm)}
+ const legs=[];for(const side of [-1,1]){const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.23,.78,4,7),armor);leg.position.set(side*.32,.55,0);leg.castShadow=true;root.add(leg);const boot=new THREE.Mesh(new THREE.BoxGeometry(.48,.25,.72),trim);boot.position.set(side*.32,.17,.17);boot.castShadow=true;root.add(boot);legs.push(leg)}
+ const chest=new THREE.Mesh(new THREE.BoxGeometry(.78,.8,.22),trim);chest.position.set(0,1.78,.47);chest.castShadow=true;root.add(chest);
+ const scythe=new THREE.Group();const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.045,.07,3.3,8),trim);shaft.rotation.z=-.2;shaft.position.y=1.45;scythe.add(shaft);const blade=new THREE.Mesh(new THREE.TorusGeometry(.7,.09,8,18,Math.PI*.8),new THREE.MeshStandardMaterial({color:0xc1d0d7,metalness:.9,roughness:.2,emissive:0x25313a}));blade.position.set(.5,3.05,0);blade.rotation.z=.3;scythe.add(blade);scythe.position.set(.95,0,.25);root.add(scythe);
+ root.userData={legs,arms:shoulders,scythe,cloak};return root;
+}
+const playerModel=makeWarrior(false,true);scene.add(playerModel);
+function enemyModel(e){let m=makeWarrior(!!e.boss,false);m.scale.setScalar(e.boss?1.7:.8);if(e.kind==='wraith')m.traverse(o=>{if(o.isMesh&&o.material)o.material=o.material.clone(),o.material.transparent=true,o.material.opacity=.68});scene.add(m);return m}
+function draw(){
+ if(!player)return;
+ const target=new THREE.Vector3(player.x,0,player.y);camera.position.lerp(new THREE.Vector3(player.x,27,player.y+27),.09);camera.lookAt(target);
+ fireLight.position.set(player.x+7,3,player.y-6);
+ playerModel.position.set(player.x,0,player.y);playerModel.rotation.y=-aimAngle();
+ const stride=Math.sin(player.walkPhase)*player.moveAmount;playerModel.userData.legs[0].rotation.x=stride*.65;playerModel.userData.legs[1].rotation.x=-stride*.65;playerModel.userData.arms[0].rotation.x=-stride*.3;playerModel.userData.arms[1].rotation.x=stride*.3;playerModel.position.y=Math.abs(stride)*.045;
+ playerModel.userData.scythe.rotation.z=attack>0?Math.sin((attack/player.atkRate)*Math.PI)*1.1:0;
+ playerModel.visible=player.inv<=0||Math.floor(gameTime*18)%2===0;
+ const active=new Set();
+ enemies.forEach((e,i)=>{let id=e;active.add(id);let model=actorMeshes.get(id);if(!model){model=enemyModel(e);actorMeshes.set(id,model)}model.position.set(e.x,0,e.y);model.lookAt(player.x,0,player.y);model.position.y=.06+Math.sin(gameTime*3+e.phase)*.06;if(e.hit>0)model.traverse(o=>{if(o.isMesh&&o.material&&o.material.emissive)o.material.emissive.setHex(0x552233)})});
+ for(const [id,m] of actorMeshes){if(!active.has(id)){scene.remove(m);m.traverse(o=>{if(o.geometry)o.geometry.dispose()});actorMeshes.delete(id)}}
+ renderer.render(scene,camera);
 }
 function loop(t){let dt=Math.min((t-last)/1000||0,.033);last=t;update(dt);draw();requestAnimationFrame(loop)}
 requestAnimationFrame(loop);
