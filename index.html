@@ -204,14 +204,31 @@ const playerModel=makeWarrior(false,true);scene.add(playerModel);
 function enemyModel(e){let m=makeWarrior(!!e.boss,false);m.scale.setScalar(e.boss?1.7:.8);if(e.kind==='wraith')m.traverse(o=>{if(o.isMesh&&o.material)o.material=o.material.clone(),o.material.transparent=true,o.material.opacity=.68});scene.add(m);return m}
 let frameDelta=.016;let attackAnimTime=0,attackAnimDuration=.64;function draw(dt){frameDelta=dt;
  if(!player)return;
- const target=new THREE.Vector3(player.x,0,player.y);const desiredCamera=new THREE.Vector3(player.x,22,player.y+18);camera.position.lerp(desiredCamera,1-Math.exp(-4.5*frameDelta));camera.lookAt(target);
+ const target=new THREE.Vector3(player.x,1.35,player.y);
+ const desiredCamera=new THREE.Vector3(player.x,10.8,player.y+13.5);
+ camera.position.lerp(desiredCamera,1-Math.exp(-5.5*frameDelta));camera.lookAt(target);
  fireLight.position.set(player.x+7,3,player.y-6);
  playerModel.position.set(player.x,0,player.y);playerModel.rotation.y=aimAngle();
- const stride=Math.sin(player.walkPhase)*player.moveAmount;playerModel.userData.legs[0].rotation.x=stride*.65;playerModel.userData.legs[1].rotation.x=-stride*.65;playerModel.userData.arms[0].rotation.x=-stride*.3;playerModel.userData.arms[1].rotation.x=stride*.3;playerModel.position.y=Math.abs(Math.sin(player.walkPhase*2))*.07*player.moveAmount;playerModel.userData.cloak.rotation.z=Math.sin(gameTime*2.1)*.035+stride*.055;playerModel.userData.cloak.rotation.x=-.18+Math.sin(gameTime*2.8)*.025;
- playerModel.userData.scythe.rotation.z=attack>0?Math.sin((1-attack/player.atkRate)*Math.PI)*1.9:0;
+ const rig=playerModel.userData;
+ const stride=Math.sin(player.walkPhase)*player.moveAmount;
+ rig.legPivots[0].rotation.x=stride*.42;rig.legPivots[1].rotation.x=-stride*.42;
+ rig.armPivots[0].rotation.x=-stride*.16;rig.armPivots[1].rotation.x=stride*.16;
+ rig.train.rotation.z=Math.sin(gameTime*1.8)*.035+stride*.045;
+ rig.train.rotation.x=-.18+Math.sin(gameTime*2.2)*.035;
+ playerModel.position.y=Math.abs(Math.sin(player.walkPhase*2))*.035*player.moveAmount;
+ const attackT=attackAnimTime>0?1-attackAnimTime/attackAnimDuration:0;
+ const wind=Math.sin(Math.min(1,attackT/.28)*Math.PI/2);
+ const swing=attackT>.28?Math.sin(clamp((attackT-.28)/.52,0,1)*Math.PI):0;
+ const recover=attackT>.72?clamp((1-attackT)/.28,0,1):1;
+ rig.armPivots[0].rotation.x+=attackAnimTime>0?-.95*wind+1.5*swing:0;
+ rig.armPivots[0].rotation.z=attackAnimTime>0?-.38*wind+.82*swing:0;
+ rig.armPivots[1].rotation.x=attackAnimTime>0?.42*wind-.65*swing:stride*.16;
+ rig.weaponPivot.rotation.x=attackAnimTime>0?-.55*wind+1.05*swing:0;
+ rig.weaponPivot.rotation.z=attackAnimTime>0?-.95*wind+2.25*swing*recover:0;
+ rig.weapon.rotation.z=-.42+(attackAnimTime>0?-.35*wind+.48*swing:0);
  playerModel.visible=player.inv<=0||Math.floor(gameTime*18)%2===0;
  const active=new Set();
- enemies.forEach((e,i)=>{let id=e;active.add(id);let model=actorMeshes.get(id);if(!model){model=enemyModel(e);actorMeshes.set(id,model)}model.position.set(e.x,0,e.y);model.lookAt(player.x,0,player.y);model.position.y=.06+Math.sin(gameTime*3+e.phase)*.06;if(e.hit>0)model.traverse(o=>{if(o.isMesh&&o.material&&o.material.emissive)o.material.emissive.setHex(0x552233)})});
+ enemies.forEach(e=>{let id=e;active.add(id);let model=actorMeshes.get(id);if(!model){model=enemyModel(e);actorMeshes.set(id,model)}model.position.set(e.x,0,e.y);model.lookAt(player.x,0,player.y);model.position.y=.06+Math.sin(gameTime*3+e.phase)*.06;if(e.hit>0)model.traverse(o=>{if(o.isMesh&&o.material&&o.material.emissive)o.material.emissive.setHex(0x552233)})});
  for(const [id,m] of actorMeshes){if(!active.has(id)){scene.remove(m);m.traverse(o=>{if(o.geometry)o.geometry.dispose()});actorMeshes.delete(id)}}
  renderer.render(scene,camera);
 }
