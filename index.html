@@ -65,7 +65,7 @@ canvas.addEventListener('mousedown',()=>mouse.down=true);addEventListener('mouse
 const rand=(a,b)=>a+Math.random()*(b-a),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 let player,enemies,particles,decals,loot,inventory,gameOn=false,last=0,spawn=0,attack=0,dash=0,burst=0,shake=0,kills=0,wave=1,level=1,xp=0,xpNeed=100,gameTime=0,bossSpawnedWave=0;
 const ui=id=>document.getElementById(id);
-function reset(){player={x:W/2,y:H/2,r:15,hp:100,maxHp:100,speed:205,damage:34,range:105,atkRate:.42,regen:0,inv:0};enemies=[];particles=[];decals=[];loot=[];inventory=[];try{inventory=JSON.parse(localStorage.getItem('ashenVowInventory')||'[]')}catch(e){inventory=[]}
+function reset(){player={x:W/2,y:H/2,r:15,hp:100,maxHp:100,speed:205,damage:34,range:105,atkRate:.42,regen:0,inv:0,walkPhase:0,moveAmount:0};enemies=[];particles=[];decals=[];loot=[];inventory=[];try{inventory=JSON.parse(localStorage.getItem('ashenVowInventory')||'[]')}catch(e){inventory=[]}
 kills=0;wave=1;level=1;xp=0;xpNeed=100;spawn=0;gameTime=0;bossSpawnedWave=0;
 inventory.forEach(i=>{if(i.stat==='damage')player.damage+=i.value;if(i.stat==='health'){player.maxHp+=i.value;player.hp+=i.value}if(i.stat==='speed')player.speed+=i.value});
 updateHud();renderLoot();ui('bossbar').style.display='none'}
@@ -82,7 +82,7 @@ function soulBurst(){if(burst>0)return;burst=5;let n=0;enemies.forEach(e=>{if(di
 function levelUp(){level++;xp-=xpNeed;xpNeed=Math.floor(xpNeed*1.35);gameOn=false;let options=[['KAN YEMİNİ','Azami can +25',()=>{player.maxHp+=25;player.hp=Math.min(player.maxHp,player.hp+25)}],['KIRIK AY','Tırpan hasarı +12',()=>player.damage+=12],['KÜL ADIMI','Hareket hızı +25',()=>player.speed+=25],['AÇ RUH','Ruh patlaması bekleme süresi azalır',()=>burst=Math.max(0,burst-2)],['SON NEFES','Saniyede 1.5 can yenile',()=>player.regen+=1.5],['KESKİN YAY','Saldırı hızı artar',()=>player.atkRate=Math.max(.2,player.atkRate-.06)]].sort(()=>Math.random()-.5).slice(0,3);ui('choices').innerHTML='';options.forEach(o=>{let b=document.createElement('button');b.className='choice';b.innerHTML='<b>'+o[0]+'</b><span>'+o[1]+'</span>';b.onclick=()=>{o[2]();ui('levelup').style.display='none';gameOn=true;say('SEVİYE '+level)};ui('choices').appendChild(b)});ui('levelup').style.display='flex'}
 function updateHud(){ui('lv').textContent=level;ui('kills').textContent=kills;ui('wave').textContent=wave;ui('hpText').textContent=Math.ceil(player.hp)+' / '+player.maxHp;ui('hpFill').style.width=player.hp/player.maxHp*100+'%';ui('xpText').textContent=xp+' / '+xpNeed;ui('xpFill').style.width=xp/xpNeed*100+'%'}
 function update(dt){if(!gameOn)return;gameTime+=dt;attack=Math.max(0,attack-dt);dash=Math.max(0,dash-dt);burst=Math.max(0,burst-dt);player.inv=Math.max(0,player.inv-dt);player.hp=Math.min(player.maxHp,player.hp+player.regen*dt);
-let sx=(keys.KeyD?1:0)-(keys.KeyA?1:0),sy=(keys.KeyS?1:0)-(keys.KeyW?1:0);let dx=(sx-sy)*.7071,dy=(sx+sy)*.7071,l=Math.hypot(dx,dy)||1;player.x+=dx/l*player.speed*dt;player.y+=dy/l*player.speed*dt;
+let sx=(keys.KeyD?1:0)-(keys.KeyA?1:0),sy=(keys.KeyS?1:0)-(keys.KeyW?1:0);let moving=!!(sx||sy);player.moveAmount+=((moving?1:0)-player.moveAmount)*Math.min(1,dt*12);if(moving)player.walkPhase+=dt*11;let dx=(sx-sy)*.7071,dy=(sx+sy)*.7071,l=Math.hypot(dx,dy)||1;player.x+=dx/l*player.speed*dt;player.y+=dy/l*player.speed*dt;
 if(keys.Space){keys.Space=false;dashNow()}if(keys.ShiftLeft||keys.ShiftRight){keys.ShiftLeft=keys.ShiftRight=false;soulBurst()}if(mouse.down)attackNow();
 spawn-=dt;if(spawn<=0){spawnEnemy();spawn=Math.max(.42,1.35-wave*.055)}
 if(wave%5===0&&bossSpawnedWave!==wave){bossSpawnedWave=wave;spawnEnemy(true);ui('bossbar').style.display='block';say('KATEDRALİN PİSKOPOSU UYANDI')}
@@ -101,10 +101,20 @@ for(let i=-3;i<4;i++){let x=player.x+i*330+90,yy=player.y-420;ctx.fillStyle='#08
 enemies.forEach(e=>{ctx.save();ctx.translate(e.x,e.y);ctx.shadowBlur=18;ctx.shadowColor=e.kind==='wraith'?'#6687a9':'#721b27';ctx.fillStyle=e.hit>0?'#d5dce0':e.boss?'#5b3030':e.kind==='wraith'?'#536174':'#34252a';ctx.beginPath();ctx.ellipse(0,2,e.r*.72,e.r*1.15,0,0,Math.PI*2);ctx.fill();if(e.boss){ctx.strokeStyle='#b38b58';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-e.r,-e.r*.6);ctx.lineTo(-e.r*1.2,-e.r*1.5);ctx.lineTo(-e.r*.35,-e.r*1.05);ctx.moveTo(e.r,-e.r*.6);ctx.lineTo(e.r*1.2,-e.r*1.5);ctx.lineTo(e.r*.35,-e.r*1.05);ctx.stroke();}ctx.fillStyle='#0b0b10';ctx.beginPath();ctx.arc(0,-e.r*.55,e.r*.52,0,Math.PI*2);ctx.fill();ctx.fillStyle=e.boss?'#f1b75d':'#bd4651';ctx.fillRect(-5,-e.r*.65,3,2);ctx.fillRect(3,-e.r*.65,3,2);ctx.shadowBlur=0;if(e.hp<e.max){ctx.fillStyle='#1a1115';ctx.fillRect(-e.r,-e.r-10,e.r*2,3);ctx.fillStyle=e.boss?'#d4a45d':'#9d3039';ctx.fillRect(-e.r,-e.r-10,e.r*2*e.hp/e.max,3)}ctx.restore()});
  // player and animated scythe
 let aim=Math.atan2(mouse.y-H/2,mouse.x-W/2);ctx.save();ctx.translate(player.x,player.y);ctx.rotate(aim);ctx.globalAlpha=player.inv>0?.55:1;
-let walkBob=Math.sin(gameTime*10)*(Math.abs((keys.KeyW||keys.KeyA||keys.KeyS||keys.KeyD)?1:0)) * 2 + Math.sin(gameTime*2.2)*1.4;
-ctx.fillStyle='#050609';ctx.beginPath();ctx.ellipse(0,7+walkBob,18,23,0,0,Math.PI*2);ctx.fill();
-ctx.fillStyle='#29242b';ctx.beginPath();ctx.moveTo(-13,-2+walkBob);ctx.lineTo(-4,-30+walkBob);ctx.lineTo(5,-34+walkBob);ctx.lineTo(16,-2+walkBob);ctx.lineTo(24,27+walkBob);ctx.quadraticCurveTo(0,20+walkBob,-22,29+walkBob);ctx.closePath();ctx.fill();
-ctx.strokeStyle='#51424a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-10,2+walkBob);ctx.lineTo(-19,25+walkBob+Math.sin(gameTime*8)*2);ctx.moveTo(10,1+walkBob);ctx.lineTo(18,26+walkBob-Math.sin(gameTime*8)*2);ctx.stroke();
+let stride=Math.sin(player.walkPhase),walkBob=Math.abs(stride)*2.4*player.moveAmount+Math.sin(gameTime*2.2)*.7;
+let legSwing=stride*8*player.moveAmount,armSwing=-stride*5*player.moveAmount;
+ctx.fillStyle='rgba(0,0,0,.62)';ctx.beginPath();ctx.ellipse(0,22,29,13,0,0,Math.PI*2);ctx.fill();
+ctx.lineCap='round';ctx.lineJoin='round';
+ctx.strokeStyle='#09090d';ctx.lineWidth=11;ctx.beginPath();ctx.moveTo(-9,10+walkBob);ctx.lineTo(-12+legSwing,27+walkBob);ctx.moveTo(9,10+walkBob);ctx.lineTo(12-legSwing,27+walkBob);ctx.stroke();
+ctx.strokeStyle='#51434a';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(-12+legSwing,26+walkBob);ctx.lineTo(-17+legSwing,30+walkBob);ctx.moveTo(12-legSwing,26+walkBob);ctx.lineTo(17-legSwing,30+walkBob);ctx.stroke();
+ctx.fillStyle='#100e14';ctx.beginPath();ctx.moveTo(-17,-13+walkBob);ctx.lineTo(-22,4+walkBob);ctx.lineTo(-27,25+walkBob);ctx.quadraticCurveTo(0,34+walkBob,27,25+walkBob);ctx.lineTo(22,4+walkBob);ctx.lineTo(17,-13+walkBob);ctx.closePath();ctx.fill();
+ctx.fillStyle='#342b32';ctx.beginPath();ctx.moveTo(-15,-17+walkBob);ctx.lineTo(-23,-7+walkBob);ctx.lineTo(-25,12+walkBob);ctx.quadraticCurveTo(0,25+walkBob,25,12+walkBob);ctx.lineTo(23,-7+walkBob);ctx.lineTo(15,-17+walkBob);ctx.closePath();ctx.fill();
+ctx.fillStyle='#51414a';ctx.beginPath();ctx.moveTo(-19,-13+walkBob);ctx.lineTo(-28,-5+walkBob);ctx.lineTo(-24,5+walkBob);ctx.lineTo(-12,1+walkBob);ctx.fill();ctx.beginPath();ctx.moveTo(19,-13+walkBob);ctx.lineTo(28,-5+walkBob);ctx.lineTo(24,5+walkBob);ctx.lineTo(12,1+walkBob);ctx.fill();
+ctx.strokeStyle='#17151b';ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(-19,-7+walkBob);ctx.lineTo(-23+armSwing,8+walkBob);ctx.moveTo(19,-7+walkBob);ctx.lineTo(24-armSwing,7+walkBob);ctx.stroke();
+ctx.strokeStyle='#79634f';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-23+armSwing,7+walkBob);ctx.lineTo(-25+armSwing,13+walkBob);ctx.moveTo(24-armSwing,6+walkBob);ctx.lineTo(26-armSwing,12+walkBob);ctx.stroke();
+ctx.fillStyle='#17151a';ctx.beginPath();ctx.moveTo(-12,-15+walkBob);ctx.lineTo(12,-15+walkBob);ctx.lineTo(16,8+walkBob);ctx.quadraticCurveTo(0,17+walkBob,-16,8+walkBob);ctx.closePath();ctx.fill();
+ctx.strokeStyle='#8b7458';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-11,-9+walkBob);ctx.lineTo(0,4+walkBob);ctx.lineTo(11,-9+walkBob);ctx.stroke();
+ctx.fillStyle='#b69a70';ctx.fillRect(-5,8+walkBob,10,4);
 ctx.fillStyle='#c4b4a6';ctx.beginPath();ctx.arc(0,-18,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17141a';ctx.beginPath();ctx.moveTo(-9,-20);ctx.lineTo(0,-36);ctx.lineTo(10,-20);ctx.lineTo(6,-14);ctx.lineTo(-8,-14);ctx.fill();
 ctx.strokeStyle='#9d896e';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(7,-5);ctx.lineTo(38,12);ctx.stroke();ctx.strokeStyle='#a9b9c5';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(38,12);ctx.quadraticCurveTo(70,7,76,-22);ctx.quadraticCurveTo(51,-1,38,12);ctx.stroke();
 ctx.restore();
