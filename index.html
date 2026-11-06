@@ -117,7 +117,7 @@ function dropLoot(x,y,boss=false){let pool=boss?[['BISHOP’S RELIC','damage',18
 function renderLoot(){ui('lootlist').innerHTML=inventory.length?inventory.slice(-5).reverse().map(i=>'<div class="lootline"><span>'+i.name+'</span><em>'+i.rarity+'</em></div>').join(''):'Henüz ganimet yok.'}
 function collectLoot(){loot.forEach(item=>{item.life-=.016;if(dist(item,player)<1.15){inventory.push({name:item.name,stat:item.stat,value:item.value,rarity:item.rarity});try{localStorage.setItem('ashenVowInventory',JSON.stringify(inventory))}catch(e){}if(item.stat==='damage')player.damage+=item.value;if(item.stat==='health'){player.maxHp+=item.value;player.hp=Math.min(player.maxHp,player.hp+item.value)}if(item.stat==='speed')player.speed+=item.value*.04;ui('lootnotice').textContent=item.name+'  ·  '+item.rarity;ui('lootnotice').style.opacity=1;clearTimeout(collectLoot.t);collectLoot.t=setTimeout(()=>ui('lootnotice').style.opacity=0,1500);particle(item.x,item.y,'#d4b77d',12,100)}});loot=loot.filter(i=>i.life>0&&dist(i,player)>=1.15);renderLoot()}
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),groundPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0),aimPoint=new THREE.Vector3();function aimWorld(){pointer.set(mouse.x/W*2-1,-(mouse.y/H)*2+1);raycaster.setFromCamera(pointer,camera);raycaster.ray.intersectPlane(groundPlane,aimPoint);return aimPoint}function aimAngle(){const p=aimWorld();return Math.atan2(p.x-player.x,p.z-player.y)}
-function attackNow(){if(attack>0)return;attack=player.atkRate;combo=comboTimer>0?(combo%3)+1:1;comboTimer=1.05;let a=aimAngle(),hit=0;const strikeDamage=player.damage*(combo===3?1.55:combo===2?1.12:1);enemies.forEach(e=>{let dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),ang=Math.atan2(dy,dx),diff=Math.atan2(Math.sin(ang-a),Math.cos(ang-a));if(d<player.range+e.r&&Math.abs(diff)<.72){e.hp-=strikeDamage;e.hit=.22;hit++;particle(e.x,e.y,'#b7d2df',10,145);if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none';say('BOSS YENİLDİ  ·  KUTSAL EMANET DÜŞTÜ')}else if(Math.random()<.22)dropLoot(e.x,e.y,false);particle(e.x,e.y,'#a88b61',16,170);decals.push({x:e.x,y:e.y,r:rand(12,25),a:rand(.2,.5)});}}});enemies=enemies.filter(e=>e.hp>0);if(hit===0)particle(player.x+Math.sin(a)*4,player.y+Math.cos(a)*4,'#a9c5d6',5,65)}
+function attackNow(){if(attack>0)return;attack=player.atkRate;attackAnimTime=attackAnimDuration;combo=comboTimer>0?(combo%3)+1:1;comboTimer=1.05;let a=aimAngle(),hit=0;const strikeDamage=player.damage*(combo===3?1.55:combo===2?1.12:1);enemies.forEach(e=>{let dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),ang=Math.atan2(dy,dx),diff=Math.atan2(Math.sin(ang-a),Math.cos(ang-a));if(d<player.range+e.r&&Math.abs(diff)<.72){e.hp-=strikeDamage;e.hit=.22;hit++;particle(e.x,e.y,'#b7d2df',10,145);if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none';say('BOSS YENİLDİ  ·  KUTSAL EMANET DÜŞTÜ')}else if(Math.random()<.22)dropLoot(e.x,e.y,false);particle(e.x,e.y,'#a88b61',16,170);decals.push({x:e.x,y:e.y,r:rand(12,25),a:rand(.2,.5)});}}});enemies=enemies.filter(e=>e.hp>0);if(hit===0)particle(player.x+Math.sin(a)*4,player.y+Math.cos(a)*4,'#a9c5d6',5,65)}
 function dashNow(){if(dash>0)return;dash=.72;player.inv=.32;let dx=(keys.KeyD?1:0)-(keys.KeyA?1:0),dy=(keys.KeyS?1:0)-(keys.KeyW?1:0);if(!dx&&!dy){dx=mouse.x-W/2;dy=mouse.y-H/2}let l=Math.hypot(dx,dy)||1;player.x+=dx/l*5.5;player.y+=dy/l*6.5;particle(player.x,player.y,'#8da6bd',20,150)}
 function soulBurst(){if(burst>0)return;burst=5;let n=0;enemies.forEach(e=>{if(dist(e,player)<8){e.hp-=player.damage*2;n++;particle(e.x,e.y,'#a9c9df',14,180)}});enemies=enemies.filter(e=>{if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none'}else if(Math.random()<.22)dropLoot(e.x,e.y,false);return false}return true});particle(player.x,player.y,'#91b8d3',35,220);say('RUH PATLAMASI  ·  '+n+' HEDEF')}
 
@@ -131,7 +131,7 @@ function useSkill(key){if(!gameOn||skillCD[key]>0)return;const a=aimAngle();let 
  enemies=enemies.filter(e=>{if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none'}else if(Math.random()<.22)dropLoot(e.x,e.y,false);return false}return true});updateHud();updateSkillHud();updateMMO()}
 function levelUp(){level++;xp-=xpNeed;xpNeed=Math.floor(xpNeed*1.35);gameOn=false;let options=[['KAN YEMİNİ','Azami can +25',()=>{player.maxHp+=25;player.hp=Math.min(player.maxHp,player.hp+25)}],['KIRIK AY','Tırpan hasarı +12',()=>player.damage+=12],['KÜL ADIMI','Hareket hızı +25',()=>player.speed+=.65],['AÇ RUH','Ruh patlaması bekleme süresi azalır',()=>burst=Math.max(0,burst-2)],['SON NEFES','Saniyede 1.5 can yenile',()=>player.regen+=1.5],['KESKİN YAY','Saldırı hızı artar',()=>player.atkRate=Math.max(.2,player.atkRate-.06)]].sort(()=>Math.random()-.5).slice(0,3);ui('choices').innerHTML='';options.forEach(o=>{let b=document.createElement('button');b.className='choice';b.innerHTML='<b>'+o[0]+'</b><span>'+o[1]+'</span>';b.onclick=()=>{o[2]();ui('levelup').style.display='none';gameOn=true;say('SEVİYE '+level)};ui('choices').appendChild(b)});ui('levelup').style.display='flex'}
 const mapCanvas=ui('mmo-map'),mapCtx=mapCanvas.getContext('2d');function drawMiniMap(){if(!player)return;const c=mapCtx;c.clearRect(0,0,150,150);c.fillStyle='#0b111b';c.fillRect(0,0,150,150);c.strokeStyle='#39485c';for(let i=0;i<=150;i+=25){c.beginPath();c.moveTo(i,0);c.lineTo(i,150);c.stroke();c.beginPath();c.moveTo(0,i);c.lineTo(150,i);c.stroke()}enemies.forEach(e=>{let x=75+(e.x-player.x)*.7,y=75+(e.y-player.y)*.7;if(x>2&&x<148&&y>2&&y<148){c.fillStyle=e.boss?'#e4a65c':'#a84955';c.beginPath();c.arc(x,y,e.boss?4:2,0,Math.PI*2);c.fill()}});c.fillStyle='#d9eaff';c.beginPath();c.arc(75,75,4,0,Math.PI*2);c.fill();c.strokeStyle='#d9eaff';c.beginPath();c.moveTo(75,75);c.lineTo(75+Math.sin(aimAngle())*11,75+Math.cos(aimAngle())*11);c.stroke();c.strokeStyle='#9b8965';c.strokeRect(.5,.5,149,149)}function updateMMO(){if(!player)return;ui('questcount').textContent=Math.min(kills,12)+' / 12 düşman';ui('questfill').style.width=Math.min(100,kills/12*100)+'%';ui('questboss').textContent=inventory.some(i=>i.rarity==='Efsanevi')?'Durum: Mühür ele geçirildi':'Durum: Piskopos bekleniyor';drawMiniMap()}function updateHud(){ui('lv').textContent=level;ui('kills').textContent=kills;ui('wave').textContent=wave;ui('hpText').textContent=Math.ceil(player.hp)+' / '+player.maxHp;ui('hpFill').style.width=player.hp/player.maxHp*100+'%';ui('xpText').textContent=xp+' / '+xpNeed;ui('xpFill').style.width=xp/xpNeed*100+'%'}
-function update(dt){if(!gameOn)return;gameTime+=dt;attack=Math.max(0,attack-dt);dash=Math.max(0,dash-dt);burst=Math.max(0,burst-dt);comboTimer=Math.max(0,comboTimer-dt);for(const k of ['q','e','r','f'])skillCD[k]=Math.max(0,skillCD[k]-dt);player.inv=Math.max(0,player.inv-dt);player.hp=Math.min(player.maxHp,player.hp+player.regen*dt);
+function update(dt){if(!gameOn)return;gameTime+=dt;attack=Math.max(0,attack-dt);attackAnimTime=Math.max(0,attackAnimTime-dt);dash=Math.max(0,dash-dt);burst=Math.max(0,burst-dt);comboTimer=Math.max(0,comboTimer-dt);for(const k of ['q','e','r','f'])skillCD[k]=Math.max(0,skillCD[k]-dt);player.inv=Math.max(0,player.inv-dt);player.hp=Math.min(player.maxHp,player.hp+player.regen*dt);
 let sx=(keys.KeyD?1:0)-(keys.KeyA?1:0),sy=(keys.KeyS?1:0)-(keys.KeyW?1:0);let moving=!!(sx||sy);player.moveAmount+=((moving?1:0)-player.moveAmount)*Math.min(1,dt*4.5);if(moving)player.walkPhase+=dt*3.2;let l=Math.hypot(sx,sy)||1;player.x+=sx/l*player.speed*dt;player.y+=sy/l*player.speed*dt;player.x=clamp(player.x,-210,210);player.y=clamp(player.y,-210,210);
 if(keys.Space){keys.Space=false;dashNow()}if(keys.ShiftLeft||keys.ShiftRight){keys.ShiftLeft=keys.ShiftRight=false;useSkill('f')}for(const k of ['q','e','r','f']){const code={q:'KeyQ',e:'KeyE',r:'KeyR',f:'KeyF'}[k];if(keys[code]){keys[code]=false;useSkill(k)}}if(mouse.down)attackNow();
 spawn-=dt;if(spawn<=0){spawnEnemy();spawn=Math.max(.42,1.35-wave*.055)}
@@ -143,55 +143,66 @@ skillFx.forEach(fx=>{fx.life-=dt;let t=1-fx.life/fx.max;fx.mesh.scale.setScalar(
 const actorMeshes=new Map();
 function makeWarrior(isBoss=false,isPlayer=false){
  const root=new THREE.Group();
- const gown=new THREE.MeshStandardMaterial({color:isPlayer?0x0b0d14:0x30232a,roughness:.96});
- const rag=new THREE.MeshStandardMaterial({color:0x29252d,roughness:1});
- const leather=new THREE.MeshStandardMaterial({color:0x302a30,roughness:.85});
- const silver=new THREE.MeshStandardMaterial({color:0x8f9bad,metalness:.78,roughness:.28});
- const pale=new THREE.MeshStandardMaterial({color:0xd9dce5,roughness:.72});
- const skin=new THREE.MeshStandardMaterial({color:0xd8d0d2,roughness:.8});
- const dark=new THREE.MeshStandardMaterial({color:0x09090e,roughness:1});
- const ice=new THREE.MeshStandardMaterial({color:0xd9efff,metalness:.86,roughness:.18,emissive:0x314c68,emissiveIntensity:.7});
- // Tall, narrow silhouette beneath a deep, sculpted veil
- const skirt=new THREE.Mesh(new THREE.ConeGeometry(1.18,3.05,14,1),gown);skirt.position.y=1.48;skirt.scale.z=.78;skirt.castShadow=true;root.add(skirt);
- const innerSkirt=new THREE.Mesh(new THREE.ConeGeometry(.78,2.5,10),rag);innerSkirt.position.set(0,1.52,.08);innerSkirt.scale.z=.8;root.add(innerSkirt);
- for(let i=0;i<9;i++){let panel=new THREE.Mesh(new THREE.BoxGeometry(.12,rnd(1.5,2.5),.1),i%2?rag:gown);panel.position.set(Math.sin(i*2.4)*.65,.8+Math.random()*.4,Math.cos(i*2.4)*.55);panel.rotation.z=rnd(-.22,.22);panel.castShadow=true;root.add(panel)}
- const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.34,.78,6,10),leather);torso.position.y=2.72;torso.castShadow=true;root.add(torso);
- // Layered breastplate, rivets and asymmetric shoulder protection
- const breast=new THREE.Mesh(new THREE.BoxGeometry(.56,.66,.16),silver);breast.position.set(0,2.83,.29);breast.scale.set(.88,1,.7);breast.castShadow=true;root.add(breast);
- const cuirass=new THREE.Mesh(new THREE.CapsuleGeometry(.39,.5,4,8),leather);cuirass.position.set(0,2.72,.22);cuirass.scale.set(1,.9,.48);root.add(cuirass);
- for(let side of [-1,1]){const pauldron=new THREE.Mesh(new THREE.SphereGeometry(.31,10,8),side<0?silver:leather);pauldron.scale.set(1,.48,1.15);pauldron.position.set(side*.58,3.02,.03);pauldron.castShadow=true;root.add(pauldron);for(let j=0;j<3;j++){let rivet=new THREE.Mesh(new THREE.SphereGeometry(.035,6,6),silver);rivet.position.set(side*(.48+j*.08),2.96+j*.035,.28);root.add(rivet)}}
- const gorget=new THREE.Mesh(new THREE.TorusGeometry(.29,.055,7,18),silver);gorget.position.set(0,3.13,.04);gorget.rotation.x=Math.PI/2;root.add(gorget);
- const mantle=new THREE.Mesh(new THREE.ConeGeometry(.92,1.4,9),gown);mantle.position.set(0,2.72,-.22);mantle.rotation.x=-.18;mantle.castShadow=true;root.add(mantle);
- // Hood and pale, partially shadowed face
- const hood=new THREE.Mesh(new THREE.SphereGeometry(.52,14,12),dark);hood.scale.set(1.12,1.32,1.08);hood.position.set(0,3.62,-.04);hood.castShadow=true;root.add(hood);
- const hoodRim=new THREE.Mesh(new THREE.TorusGeometry(.43,.075,8,18,Math.PI),silver);hoodRim.position.set(0,3.52,.25);hoodRim.rotation.z=Math.PI;root.add(hoodRim);
- const face=new THREE.Mesh(new THREE.SphereGeometry(.29,12,10),skin);face.scale.set(.8,1.22,.62);face.position.set(0,3.43,.32);root.add(face);
- const veil=new THREE.Mesh(new THREE.ConeGeometry(.44,.68,9),dark);veil.position.set(0,3.14,.26);veil.rotation.x=.12;root.add(veil);
- // Long silver hair strands escaping the hood
- for(let side of [-1,1])for(let j=0;j<7;j++){let len=rnd(1.65,2.65);let hair=new THREE.Mesh(new THREE.CylinderGeometry(.012,.052,len,6),pale);hair.position.set(side*(.24+j*.052),2.62-rnd(0,.35),.19+j*.022);hair.rotation.z=side*(.1+j*.045);hair.rotation.x=.2;root.add(hair)}
- // Narrow shoulders, long sleeves and delicate hands
- const arms=[],legs=[];
- for(let side of [-1,1]){const shoulder=new THREE.Mesh(new THREE.SphereGeometry(.3,9,8),gown);shoulder.scale.set(1,.75,.9);shoulder.position.set(side*.53,2.95,0);root.add(shoulder);
- const sleeve=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.9,5,8),rag);sleeve.position.set(side*.67,2.25,.03);sleeve.rotation.z=side*.12;sleeve.castShadow=true;root.add(sleeve);arms.push(sleeve);
- const hand=new THREE.Mesh(new THREE.SphereGeometry(.13,8,8),skin);hand.position.set(side*.72,1.68,.08);root.add(hand);
- const thigh=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.48,5,8),leather);thigh.position.set(side*.23,.73,.04);root.add(thigh);const shin=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.42,5,8),dark);shin.position.set(side*.23,.29,.08);root.add(shin);const boot=new THREE.Mesh(new THREE.BoxGeometry(.27,.18,.48),leather);boot.position.set(side*.23,.12,.22);boot.castShadow=true;root.add(boot);legs.push(thigh)}
- // Cross pendant, chain and waist bindings
- const chain=new THREE.Mesh(new THREE.TorusGeometry(.28,.025,6,24),silver);chain.position.set(0,2.75,.34);root.add(chain);
- const waistPouch=new THREE.Mesh(new THREE.BoxGeometry(.22,.28,.2),leather);waistPouch.position.set(.38,2.08,.2);root.add(waistPouch);const cross=new THREE.Group();const vertical=new THREE.Mesh(new THREE.BoxGeometry(.075,.62,.07),silver);const horizontal=new THREE.Mesh(new THREE.BoxGeometry(.36,.075,.07),silver);horizontal.position.y=.12;cross.add(vertical,horizontal);cross.position.set(0,2.48,.48);root.add(cross);
- for(let i=0;i<3;i++){let belt=new THREE.Mesh(new THREE.TorusGeometry(.39+i*.025,.035,6,24),i===1?silver:leather);belt.position.y=2.25-i*.1;belt.rotation.x=Math.PI/2;root.add(belt)}
- // Ornate long scythe with hooked crescent blade
- const scythe=new THREE.Group();const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.035,.06,3.8,9),leather);shaft.position.y=1.9;shaft.rotation.z=-.08;scythe.add(shaft);
- for(let y of [.35,1.15,2.2,3.1]){let ring=new THREE.Mesh(new THREE.TorusGeometry(.09,.025,6,12),silver);ring.position.y=y;scythe.add(ring)}
- const bladeCurve=new THREE.QuadraticBezierCurve3(new THREE.Vector3(0,3.55,0),new THREE.Vector3(1.55,4.15,0),new THREE.Vector3(2.45,2.95,0));
- const bladeShape=new THREE.Shape();bladeShape.moveTo(0,0);bladeShape.quadraticCurveTo(1.5,.65,2.35,-.1);bladeShape.quadraticCurveTo(1.75,.2,1.25,-.18);bladeShape.quadraticCurveTo(.62,-.36,0,0);const bladeSolid=new THREE.Mesh(new THREE.ExtrudeGeometry(bladeShape,{depth:.075,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.035,bevelThickness:.025}),ice);bladeSolid.position.set(0,3.45,-.04);scythe.add(bladeSolid);const blade=new THREE.Mesh(new THREE.TubeGeometry(bladeCurve,32,.045,8,false),silver);scythe.add(blade);
- const edgeCurve=new THREE.QuadraticBezierCurve3(new THREE.Vector3(.12,3.55,.015),new THREE.Vector3(1.58,4.03,.015),new THREE.Vector3(2.4,2.95,.015));
- scythe.add(new THREE.Mesh(new THREE.TubeGeometry(edgeCurve,32,.025,6,false),silver));
- scythe.position.set(.75,0,.2);scythe.rotation.z=-.12;root.add(scythe);
- root.userData={legs,arms,scythe,cloak:mantle};return root;
+ const cloth=new THREE.MeshStandardMaterial({color:isPlayer?0x080b12:0x29232c,roughness:.96});
+ const inner=new THREE.MeshStandardMaterial({color:0x24232c,roughness:1});
+ const leather=new THREE.MeshStandardMaterial({color:0x171a22,roughness:.82});
+ const silver=new THREE.MeshStandardMaterial({color:0x9aa9ba,metalness:.82,roughness:.24});
+ const pale=new THREE.MeshStandardMaterial({color:0xdfe5ee,roughness:.7});
+ const skin=new THREE.MeshStandardMaterial({color:0xe0d9d8,roughness:.82});
+ const shadow=new THREE.MeshStandardMaterial({color:0x05070c,roughness:1});
+ const frost=new THREE.MeshStandardMaterial({color:0xc8e8ff,metalness:.88,roughness:.14,emissive:0x477ba4,emissiveIntensity:1.1});
+ const gold=new THREE.MeshStandardMaterial({color:0x8c7658,metalness:.75,roughness:.35});
+ function mesh(g,m,x,y,z,par=root){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;par.add(o);return o}
+ // Tall, severe silhouette: layered habit, long split train and fitted bodice
+ const skirt=mesh(new THREE.CylinderGeometry(.24,.82,2.05,16,1,true),cloth,0,1.12,-.02);skirt.scale.z=.78;
+ const innerSkirt=mesh(new THREE.CylinderGeometry(.2,.65,1.92,12,1,true),inner,0,1.08,.06);innerSkirt.scale.z=.78;
+ for(let i=0;i<9;i++){const a=i*Math.PI*2/9;const panel=mesh(new THREE.BoxGeometry(.24,1.85,.055),i%2?inner:cloth,Math.sin(a)*.43,1.05,Math.cos(a)*.42);panel.rotation.y=a;panel.rotation.z=(i%2?-.06:.06)}
+ const train=mesh(new THREE.ConeGeometry(.64,2.15,9,1),cloth,0,1.22,-.55);train.rotation.x=-.18;train.scale.z=.38;
+ const torso=mesh(new THREE.CapsuleGeometry(.29,.76,6,10),leather,0,2.58,0);torso.scale.set(1,.92,.72);
+ const chest=mesh(new THREE.SphereGeometry(.34,12,10),cloth,0,2.78,.12);chest.scale.set(1.05,1.15,.72);
+ const corset=mesh(new THREE.BoxGeometry(.49,.58,.09),silver,0,2.55,.255);corset.scale.set(.84,1,.6);
+ for(let i=0;i<4;i++)mesh(new THREE.SphereGeometry(.025,6,6),gold,0,2.76-i*.13,.32);
+ // A high, pointed hood and pale face framed by flowing silver hair
+ const hood=mesh(new THREE.SphereGeometry(.49,16,14),shadow,0,3.48,-.015);hood.scale.set(1.08,1.22,1.05);
+ const hoodPoint=mesh(new THREE.ConeGeometry(.32,.72,9),shadow,0,3.96,-.03);hoodPoint.rotation.z=.08;
+ const face=mesh(new THREE.SphereGeometry(.245,16,14),skin,0,3.38,.29);face.scale.set(.82,1.22,.58);
+ const veil=mesh(new THREE.ConeGeometry(.31,.48,10),shadow,0,3.08,.31);veil.rotation.x=.1;
+ const brow=mesh(new THREE.BoxGeometry(.34,.045,.04),shadow,0,3.48,.48);
+ for(let side of [-1,1]){
+   for(let j=0;j<6;j++){const len=1.65+j*.12;const strand=mesh(new THREE.CylinderGeometry(.012,.045,len,6),pale,side*(.22+j*.045),2.35-j*.035,.2+j*.018);strand.rotation.z=side*(.1+j*.025);strand.rotation.x=.16}
+   const hoodDrape=mesh(new THREE.ConeGeometry(.22,.9,8),cloth,side*.34,2.92,-.12);hoodDrape.rotation.z=side*.12;
+ }
+ // long split sleeves attached to shoulder pivots; this makes the attack readable
+ const armPivots=[],legPivots=[];
+ for(const side of [-1,1]){
+   const shoulder=new THREE.Group();shoulder.position.set(side*.39,2.88,0);root.add(shoulder);armPivots.push(shoulder);
+   mesh(new THREE.SphereGeometry(.19,10,8),cloth,0,0,0,shoulder);
+   const upper=mesh(new THREE.CapsuleGeometry(.12,.54,5,8),inner,0,-.36,.02,shoulder);upper.rotation.z=side*-.12;
+   const cuff=mesh(new THREE.TorusGeometry(.14,.035,6,12),silver,0,-.69,.03,shoulder);cuff.rotation.x=Math.PI/2;
+   const fore=mesh(new THREE.CapsuleGeometry(.105,.48,5,8),cloth,0,-.94,.04,shoulder);fore.rotation.z=side*.08;
+   mesh(new THREE.SphereGeometry(.105,8,8),skin,0,-1.22,.09,shoulder);
+   const leg=new THREE.Group();leg.position.set(side*.2,.42,0);root.add(leg);legPivots.push(leg);
+   mesh(new THREE.CapsuleGeometry(.13,.48,5,8),leather,0,-.22,0,leg);
+   mesh(new THREE.CapsuleGeometry(.105,.42,5,8),cloth,0,-.68,.02,leg);
+   mesh(new THREE.BoxGeometry(.23,.16,.38),leather,0,-.94,.12,leg);
+ }
+ // silver reliquary cross and narrow waist belt
+ const cross=new THREE.Group();mesh(new THREE.BoxGeometry(.055,.43,.055),silver,0,0,0,cross);mesh(new THREE.BoxGeometry(.25,.055,.055),silver,0,.08,0,cross);cross.position.set(0,2.42,.36);root.add(cross);
+ const belt=mesh(new THREE.TorusGeometry(.32,.035,6,24),gold,0,2.08,0);belt.rotation.x=Math.PI/2;
+ // hooked frost scythe, held in a pivot so the full body drives the swing
+ const weaponPivot=new THREE.Group();weaponPivot.position.set(.42,2.15,.22);root.add(weaponPivot);
+ const weapon=new THREE.Group();weaponPivot.add(weapon);
+ const shaft=mesh(new THREE.CylinderGeometry(.028,.045,2.65,10),leather,0,-.12,0,weapon);shaft.rotation.z=-.18;
+ for(const y of [-1.15,-.35,.45,1.08]){const ring=mesh(new THREE.TorusGeometry(.065,.018,6,12),silver,0,y,0,weapon);ring.rotation.x=Math.PI/2}
+ const bladeShape=new THREE.Shape();bladeShape.moveTo(-.04,1.03);bladeShape.quadraticCurveTo(.5,1.62,1.18,1.24);bladeShape.quadraticCurveTo(.82,1.33,.56,1.04);bladeShape.quadraticCurveTo(.28,.83,-.04,1.03);
+ const bladeMesh=new THREE.Mesh(new THREE.ExtrudeGeometry(bladeShape,{depth:.065,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.025,bevelThickness:.02}),frost);bladeMesh.castShadow=true;weapon.add(bladeMesh);
+ const edge=new THREE.QuadraticBezierCurve3(new THREE.Vector3(-.02,1.04,.045),new THREE.Vector3(.64,1.65,.045),new THREE.Vector3(1.18,1.24,.045));weapon.add(new THREE.Mesh(new THREE.TubeGeometry(edge,28,.025,7,false),silver));
+ weapon.rotation.z=-.42;weapon.rotation.x=-.08;
+ root.userData={armPivots,legPivots,weaponPivot,weapon,train,torso};return root;
 }
 const playerModel=makeWarrior(false,true);scene.add(playerModel);
 function enemyModel(e){let m=makeWarrior(!!e.boss,false);m.scale.setScalar(e.boss?1.7:.8);if(e.kind==='wraith')m.traverse(o=>{if(o.isMesh&&o.material)o.material=o.material.clone(),o.material.transparent=true,o.material.opacity=.68});scene.add(m);return m}
-let frameDelta=.016;function draw(dt){frameDelta=dt;
+let frameDelta=.016;let attackAnimTime=0,attackAnimDuration=.64;function draw(dt){frameDelta=dt;
  if(!player)return;
  const target=new THREE.Vector3(player.x,0,player.y);const desiredCamera=new THREE.Vector3(player.x,22,player.y+18);camera.position.lerp(desiredCamera,1-Math.exp(-4.5*frameDelta));camera.lookAt(target);
  fireLight.position.set(player.x+7,3,player.y-6);
