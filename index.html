@@ -176,6 +176,13 @@ function dashNow(){if(dash>0)return;dash=.72;player.inv=.32;let dx=(keys.KeyD?1:
 function soulBurst(){if(burst>0)return;burst=5;let n=0;enemies.forEach(e=>{if(dist(e,player)<8){e.hp-=player.damage*2;n++;particle(e.x,e.y,'#a9c9df',14,180)}});enemies=enemies.filter(e=>{if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none'}else if(Math.random()<.22)dropLoot(e.x,e.y,false);return false}return true});particle(player.x,player.y,'#91b8d3',35,220);say('RUH PATLAMASI  ·  '+n+' HEDEF')}
 
 function skillEffect(x,z,color,radius){const mesh=new THREE.Mesh(new THREE.TorusGeometry(radius,.11,8,48),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.9}));mesh.rotation.x=Math.PI/2;mesh.position.set(x,.16,z);mesh.scale.setScalar(.35);scene.add(mesh);skillFx.push({mesh,life:.48,max:.48})}
+const abilityDefs={
+ vesper:[["KÜL HİLALİ","Öne doğru geniş tırpan yayı",4.2],["RUH YARILMASI","İleri atıl ve yolundakileri biç",6.5],["GÖLGE ADIMI","Yöneldiğin noktaya sıçra, kısa süre dokunulmaz ol",8],["SON AĞIT","Yakındaki düşmanları ruh patlamasıyla vur",14]],
+ templar:[["YEMİN DARBESİ","Öndeki düşmanları kutsal darbeyle sars",5],["KUTSAL SİPER","Can yenile ve kısa süre dokunulmaz ol",10],["MUHAFIZ HÜCUMU","İleri atıl, çarptıklarını vur",8],["İLAHİ HÜKÜM","Çevrendeki düşmanlara kutsal hüküm indir",16]],
+ bloodknight:[["KAN YARASI","Öne doğru ağır kılıç darbesi",4],["KANLA BESLEN","Yakın düşmanlardan can çal",8],["KIZIL HÜCUM","İleri atıl ve çarpışma hasarı ver",7],["KATLİAM YEMİNİ","Çevrendekilere büyük hasar ver, can kaybet",15]],
+ frostwitch:[["BUZ MIZRAĞI","Uzak menzile buz büyüsü fırlat",3.5],["AYAZ PATLAMASI","Çevrendeki düşmanları buzla vur",7],["KIŞ SIÇRAYIŞI","Güvenli mesafeye ışınlan",8],["SONSUZ KIŞ","Geniş alana yoğun buz büyüsü yağdır",16]],
+ plaguewarden:[["VEBA İĞNESİ","Öndeki düşmanlara çürüme bulaştır",4],["ÇÜRÜME AŞISI","Can yenile ve zehirli aura oluştur",9],["SALGIN YAYILIMI","Yakın düşmanlara zincirleme çürüme yay",10],["KARA VEBA","Çevrendeki tüm düşmanlara ağır çürüme hasarı",17]]
+};
 function updateSkillHud(){const defs=abilityDefs[selectedClass]||abilityDefs.vesper;['q','e','r','f'].forEach((k,i)=>{const el=ui('skill'+k.toUpperCase()),cd=skillCD[k];el.dataset.name=defs[i][0];el.title=defs[i][0]+' — '+defs[i][1]+' · Bekleme: '+defs[i][2]+' sn';el.classList.toggle('cool',cd>0);el.querySelector('small').textContent=cd>0?cd.toFixed(1)+'s':'Hazır';el.querySelector('span')?.remove()})}
 function useSkill(key){
  if(!gameOn||skillCD[key]>0)return;
