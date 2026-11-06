@@ -89,14 +89,14 @@ import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/
 const canvas=document.getElementById('game');
 let W=innerWidth,H=innerHeight,dpr=Math.min(devicePixelRatio||1,2);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
-renderer.setPixelRatio(dpr);renderer.setSize(W,H);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.32;
+renderer.setPixelRatio(dpr);renderer.setSize(W,H);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.65;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x090d16);scene.fog=new THREE.FogExp2(0x101722,.006);
 const camera=new THREE.PerspectiveCamera(38,W/H,.1,900);camera.position.set(0,22,18);
-const hemi=new THREE.HemisphereLight(0xe2eaff,0x39313a,2.0);scene.add(hemi);
-const moon=new THREE.DirectionalLight(0xd7e4ff,3.1);moon.position.set(-25,45,-20);moon.castShadow=true;moon.shadow.mapSize.set(2048,2048);moon.shadow.camera.left=-55;moon.shadow.camera.right=55;moon.shadow.camera.top=55;moon.shadow.camera.bottom=-55;scene.add(moon);
+const hemi=new THREE.HemisphereLight(0xf0f4ff,0x514a50,2.8);scene.add(hemi);
+const moon=new THREE.DirectionalLight(0xe2edff,4.0);moon.position.set(-25,45,-20);moon.castShadow=true;moon.shadow.mapSize.set(2048,2048);moon.shadow.camera.left=-55;moon.shadow.camera.right=55;moon.shadow.camera.top=55;moon.shadow.camera.bottom=-55;scene.add(moon);
 const fireLight=new THREE.PointLight(0xb8d8ff,3.2,42);scene.add(fireLight);
-const heroFill=new THREE.DirectionalLight(0xc5d9ff,1.8);heroFill.position.set(4,8,10);scene.add(heroFill);
-const heroRim=new THREE.PointLight(0x8bbfff,5.5,18);scene.add(heroRim);
+const heroFill=new THREE.DirectionalLight(0xe1eaff,3.0);heroFill.position.set(4,8,10);scene.add(heroFill);
+const heroRim=new THREE.PointLight(0xa8d2ff,8.0,24);scene.add(heroRim);
 const groundMat=new THREE.MeshStandardMaterial({color:0x171b23,roughness:.96,metalness:.04});
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(1200,1200),groundMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.12;ground.receiveShadow=true;scene.add(ground);
 const grid=new THREE.GridHelper(1200,120,0x273344,0x1b2634);grid.position.y=-.105;grid.material.opacity=.025;grid.material.transparent=true;scene.add(grid);
@@ -246,7 +246,7 @@ function makeWarrior(isBoss=false,isPlayer=false){
 const playerModel=new THREE.Group();scene.add(playerModel);
 let playerMixer=null,playerActions={},activePlayerAction='',playerModelReady=false,weaponPivot=null;
 function addScythe(hand){
- const grip=new THREE.Group();(hand||playerModel).add(grip);grip.position.copy(hand?new THREE.Vector3(.02,-.04,.04):new THREE.Vector3(.62,1.05,.18));grip.rotation.set(.15,0,-.18);weaponPivot=grip;
+ const grip=new THREE.Group();playerModel.add(grip);grip.position.set(.78,1.35,.22);grip.rotation.set(.05,0,-.12);weaponPivot=grip;
  const shaftMat=new THREE.MeshStandardMaterial({color:0x28232a,metalness:.68,roughness:.36}),bladeMat=new THREE.MeshStandardMaterial({color:0xd9e8f5,metalness:.72,roughness:.24,emissive:0x456b91,emissiveIntensity:1.05});
  const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.045,.075,2.5,10),shaftMat);shaft.position.y=-.45;grip.add(shaft);
  const collar=new THREE.Mesh(new THREE.TorusGeometry(.105,.025,8,18),new THREE.MeshStandardMaterial({color:0x927b59,metalness:.8,roughness:.28}));collar.position.y=.67;grip.add(collar);
@@ -254,21 +254,20 @@ function addScythe(hand){
  grip.add(new THREE.Mesh(new THREE.TubeGeometry(curve,48,.065,10,false),bladeMat));
  grip.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(.05,.72,.015),new THREE.Vector3(.38,.98,.015),new THREE.Vector3(.82,1.08,.015),new THREE.Vector3(1.3,.99,.015),new THREE.Vector3(1.65,.68,.015)]),40,.018,6,false),new THREE.MeshBasicMaterial({color:0xd9efff})));
  for(let i=0;i<3;i++){const chain=new THREE.Mesh(new THREE.TorusGeometry(.11+i*.045,.012,5,12),shaftMat);chain.position.set(-.08,-.9-i*.18,.04);chain.rotation.x=Math.PI/2;grip.add(chain)}
- grip.scale.setScalar(.78);
+ grip.scale.setScalar(.92);grip.renderOrder=5;grip.traverse(o=>{if(o.isMesh){o.frustumCulled=false;o.castShadow=true;o.renderOrder=5}});
 }
 function choosePlayerAction(name,fade=.22){const next=playerActions[name];if(!next||activePlayerAction===name)return;const prev=playerActions[activePlayerAction];next.reset().fadeIn(fade).play();if(prev)prev.fadeOut(fade);activePlayerAction=name}
 function loadHero(){
  const status=ui('model-status'),loader=new GLTFLoader();
  loader.load('https://vibeassets.io/download/k6bdm27lba',gltf=>{
-  const model=gltf.scene;model.scale.setScalar(2.02);model.rotation.y=Math.PI;
+  const model=gltf.scene;model.scale.setScalar(2.22);model.rotation.y=Math.PI;
   model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{if(m&&m.emissive){m.emissive.setHex(0x171b25);m.emissiveIntensity=.42}})}});
   const box=new THREE.Box3().setFromObject(model),center=box.getCenter(new THREE.Vector3());model.position.x=-center.x;model.position.z=-center.z;model.position.y=-box.min.y;
   playerModel.add(model);playerModelReady=true;playerMixer=new THREE.AnimationMixer(model);
   gltf.animations.forEach(clip=>playerActions[clip.name]=playerMixer.clipAction(clip));
   const idle=Object.keys(playerActions).find(n=>/idle_12|idle/i.test(n));if(idle)choosePlayerAction(idle,0);
   let hand=null;model.traverse(o=>{if(o.isBone&&/right.?hand|hand.?r/i.test(o.name))hand=o});
-  if(!hand)model.traverse(o=>{if(o.isBone&&/right.?arm/i.test(o.name))hand=o});
-  addScythe(hand);
+  addScythe(null);
   status.textContent='VESPER · 3D KARAKTER HAZIR';setTimeout(()=>status.style.opacity='0',2600);
  },undefined,err=>{console.error('Hero GLB load failed',err);status.textContent='3D MODEL AĞDAN YÜKLENEMEDİ · YEDEK MODEL AKTİF';});
 }
@@ -276,8 +275,8 @@ loadHero();
 function enemyModel(e){let m=makeWarrior(!!e.boss,false);m.scale.setScalar(e.boss?1.7:.8);if(e.kind==='wraith')m.traverse(o=>{if(o.isMesh&&o.material)o.material=o.material.clone(),o.material.transparent=true,o.material.opacity=.68});scene.add(m);return m}
 let frameDelta=.016;let attackAnimTime=0,attackAnimDuration=.64;function draw(dt){frameDelta=dt;
  if(!player)return;
- const target=new THREE.Vector3(player.x,1.35,player.y);
- const desiredCamera=new THREE.Vector3(player.x,10.8,player.y+13.5);
+ const target=new THREE.Vector3(player.x,1.55,player.y);
+ const desiredCamera=new THREE.Vector3(player.x,7.8,player.y+10.2);
  camera.position.lerp(desiredCamera,1-Math.exp(-5.5*frameDelta));camera.lookAt(target);
  fireLight.position.set(player.x+7,3,player.y-6);heroRim.position.set(player.x-2,3.2,player.y+2.5);
  playerModel.position.set(player.x,0,player.y);playerModel.rotation.y=aimAngle()+Math.PI;
