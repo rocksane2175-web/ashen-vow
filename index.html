@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASHEN VOW — Gothic Action RPG</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:wght@400;600&display=swap');
+:root{--gold:#b9a078;--red:#8d2630;--ink:#09090c;--muted:#aaa09a}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#08090d;color:#e8dfd3;font-family:'Crimson Text',serif}
+#game{display:block;width:100vw;height:100vh;background:#0a0b10;cursor:crosshair}
+.vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 40%,#030407c9 100%);z-index:2}
+header{position:fixed;z-index:4;top:18px;left:22px;display:flex;align-items:center;gap:14px;pointer-events:none}
+.sig{width:42px;height:42px;border:1px solid #78664e;display:grid;place-items:center;color:#c8b28b;font-size:25px;transform:rotate(45deg);background:#0a0b10b8}.sig span{transform:rotate(-45deg)}
+.brand{font:700 18px Cinzel,serif;letter-spacing:4px;color:#e5d7c0;text-shadow:0 2px 8px #000}.sub{font:11px Cinzel;letter-spacing:2px;color:#958879;margin-top:4px}
+#hud{position:fixed;z-index:4;left:50%;bottom:20px;transform:translateX(-50%);width:min(650px,90vw);pointer-events:none}
+.bars{display:flex;gap:9px;align-items:center}.orb{width:65px;height:65px;border:2px solid #8e7860;border-radius:50%;background:radial-gradient(circle at 50% 60%,#3c1018,#10080b 70%);box-shadow:0 0 18px #8c172b55,inset 0 0 12px #000;display:grid;place-items:center;color:#d9b6a6;font:12px Cinzel}
+.orb.blue{background:radial-gradient(circle at 50% 60%,#172d48,#080d16 70%);box-shadow:0 0 18px #244b8b55,inset 0 0 12px #000}
+.meterbox{flex:1}.meterlabel{display:flex;justify-content:space-between;font:11px Cinzel;letter-spacing:1.4px;color:#c7b89f;margin:0 4px 4px}.meter{height:10px;background:#171417;border:1px solid #695a4b;box-shadow:0 2px 8px #000;overflow:hidden}.fill{height:100%;width:100%;transition:width .15s}.hp{background:linear-gradient(90deg,#5e101c,#c13b43)}.xp{background:linear-gradient(90deg,#80602c,#d7b86d)}
+#stats{position:fixed;right:22px;top:20px;z-index:4;text-align:right;font:11px Cinzel;letter-spacing:1.5px;color:#b8aa97;text-shadow:0 2px 5px #000;line-height:2}
+#help{position:fixed;left:22px;bottom:22px;z-index:4;color:#a69a8d;font-size:14px;line-height:1.55;text-shadow:0 2px 5px #000}
+#skillbar{position:fixed;z-index:5;left:50%;bottom:105px;transform:translateX(-50%);display:flex;gap:9px;pointer-events:none}
+.skill{width:58px;height:58px;position:relative;border:1px solid #9b825e;background:linear-gradient(145deg,#28212aee,#090a10ee);box-shadow:0 3px 14px #000b;display:grid;place-items:center;color:#e6d6bd;font:20px Cinzel}
+.skill b{position:absolute;left:4px;top:2px;font:10px Cinzel;color:#d8bd8c}.skill small{position:absolute;right:4px;bottom:2px;font:10px Cinzel;color:#d8d0c3}.skill.cool{filter:grayscale(.8);opacity:.62}
+.skill:after{content:attr(data-name);position:absolute;top:100%;margin-top:4px;font:9px Cinzel;letter-spacing:.7px;color:#c5b69e;white-space:nowrap}
+kbd{font:11px Cinzel;border:1px solid #77634b;padding:2px 5px;color:#e0cba6;background:#151318}
+#message{position:fixed;top:24%;left:50%;transform:translateX(-50%);z-index:5;text-align:center;font:600 18px Cinzel;letter-spacing:3px;color:#d6c4a5;text-shadow:0 2px 12px #000;opacity:0;transition:opacity .4s;pointer-events:none}
+#overlay{position:fixed;inset:0;z-index:10;background:radial-gradient(ellipse,#17151aee,#050609f5);display:flex;align-items:center;justify-content:center;text-align:center}
+.panel{width:min(560px,90vw);padding:40px 32px;border:1px solid #78654d;background:linear-gradient(145deg,#17151aee,#09090dee);box-shadow:0 0 70px #000}
+.eyebrow{font:11px Cinzel;letter-spacing:5px;color:#a58d6a}.title{font:900 clamp(36px,8vw,64px) Cinzel;letter-spacing:5px;margin:12px 0 0;color:#e9dfd0;text-shadow:0 0 24px #9e7a4b55}.rule{width:100px;height:1px;background:#8b7455;margin:20px auto}
+.desc{font-size:18px;line-height:1.55;color:#c0b5aa;max-width:440px;margin:0 auto 22px}.btn{font:600 13px Cinzel;letter-spacing:3px;color:#eee1ca;background:linear-gradient(#5b2027,#281116);border:1px solid #9b765b;padding:14px 30px;cursor:pointer}.btn:hover{filter:brightness(1.3);box-shadow:0 0 20px #8b263555}
+.small{font-size:13px;color:#8f867e;margin-top:20px;line-height:1.7}
+#levelup{display:none;position:fixed;inset:0;z-index:8;background:#050609d9;align-items:center;justify-content:center}
+.choices{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}.choice{width:145px;min-height:125px;padding:14px;border:1px solid #76634b;background:#151319;color:#e6d9c7;cursor:pointer}.choice:hover{background:#29202a;border-color:#c5a879}.choice b{display:block;font:13px Cinzel;letter-spacing:1px;color:#d7bd8f;margin-bottom:8px}.choice span{font-size:15px;color:#b8ada2}
+@media(max-width:600px){#help{font-size:12px;left:10px;bottom:8px}.orb{width:48px;height:48px}header{left:10px;top:10px}.brand{font-size:14px}#stats{right:10px;top:10px;font-size:9px}}
+
+#lootpanel{position:fixed;right:22px;bottom:22px;z-index:4;width:190px;padding:10px 12px;border:1px solid #665744;background:#0a0a0dcc;box-shadow:0 4px 20px #0008}
+#lootpanel h3{font:11px Cinzel;letter-spacing:2px;color:#c9b28b;margin:0 0 7px}
+#lootlist{font-size:13px;color:#bdb2a6;line-height:1.45;max-height:110px;overflow:hidden}
+.lootline{display:flex;justify-content:space-between;gap:6px;border-top:1px solid #302a2b;padding:4px 0}
+.lootline em{font-style:normal;color:#c9a86f}
+#bossbar{display:none;position:fixed;z-index:5;top:76px;left:50%;transform:translateX(-50%);width:min(480px,75vw);text-align:center}
+#bossname{font:12px Cinzel;letter-spacing:3px;color:#c7a77d;margin-bottom:5px;text-shadow:0 2px 8px #000}
+#bosshp{height:9px;background:#160d10;border:1px solid #80634d}
+#bosshpfill{height:100%;width:100%;background:linear-gradient(90deg,#4c101a,#b52b38)}
+#lootnotice{position:fixed;z-index:6;top:34%;left:50%;transform:translateX(-50%);font:13px Cinzel;letter-spacing:2px;color:#d7bd8f;text-shadow:0 2px 12px #000;opacity:0;transition:opacity .4s;pointer-events:none}
+@media(max-width:650px){#lootpanel{right:8px;bottom:8px;width:145px}#help{max-width:52%}}
+:root{--gold:#c7b58d;--red:#9d3440}#stats{top:18px;right:24px;padding:12px 16px;border:1px solid #71634c;background:#10131bdd;min-width:145px}#stats:before{content:'CHARACTER';display:block;color:#c8b58d;letter-spacing:3px;font-size:10px;border-bottom:1px solid #514735;margin-bottom:5px}#help{display:none}#hud{bottom:24px;left:24px;transform:none;width:min(430px,48vw)}#skillbar{bottom:24px;gap:7px}.skill{width:52px;height:52px;border-color:#88775a}#lootpanel{background:#0a0d14e8;border-color:#726448}#mmo-quests{position:fixed;z-index:5;top:104px;right:22px;width:230px;padding:13px 15px;border:1px solid #756448;background:#111722ed;box-shadow:0 8px 30px #0009}#mmo-quests h3{font:11px Cinzel;letter-spacing:2px;color:#d1b98a;margin:0 0 9px}.quest-title{font:14px Cinzel;color:#e4dac9;margin:5px 0}.quest-copy{font-size:13px;color:#a9a6a3;line-height:1.35}.quest-progress{height:5px;background:#28262a;margin-top:8px}.quest-progress span{display:block;height:100%;width:0;background:#b59a67}#mmo-map{position:fixed;z-index:5;right:22px;top:300px;width:150px;height:150px;border:1px solid #8d7958;background:#090d13dd}#mmo-chat{position:fixed;z-index:5;left:22px;bottom:112px;width:260px;height:105px;padding:9px 12px;background:#090c12d9;border-left:2px solid #8c7957;color:#b8b1a7;font-size:13px;pointer-events:none}#mmo-chat strong{font:10px Cinzel;letter-spacing:2px;color:#c8b58d;display:block;margin-bottom:5px}#mmo-location{position:fixed;z-index:4;top:78px;left:24px;color:#d2c5a9;font:11px Cinzel;letter-spacing:2px;text-shadow:0 2px 8px #000}#mmo-location span{color:#8e9bad}#mmo-bottomhint{position:fixed;z-index:4;bottom:91px;left:50%;transform:translateX(-50%);font:10px Cinzel;letter-spacing:1px;color:#a9a19a;white-space:nowrap}@media(max-width:700px){#mmo-quests{top:90px;right:8px;width:165px;padding:9px}#mmo-map{right:8px;top:255px;width:110px;height:110px}#mmo-chat{left:8px;bottom:94px;width:190px;height:80px;font-size:11px}#hud{left:8px;bottom:8px;width:48vw}#skillbar{bottom:8px;left:auto;right:8px;transform:none}.skill{width:39px;height:42px;font-size:15px}#lootpanel{display:none}#stats{right:8px;top:8px;min-width:100px}#mmo-location{left:10px;top:62px;font-size:9px}#mmo-bottomhint{display:none}}</style>
+</head>
+<body>
+<canvas id="game"></canvas><div class="vignette"></div>
+<header><div class="sig"><span>✠</span></div><div><div class="brand">ASHEN VOW</div><div class="sub">THE SILENT PENANCE</div></div></header>
+<div id="stats">LEVEL <span id="lv">1</span><br>SOULS <span id="kills">0</span><br>WAVE <span id="wave">1</span></div>
+<div id="help"><kbd>W A S D</kbd> Hareket &nbsp; <kbd>FARE</kbd> Normal saldırı<br><kbd>Q</kbd> Hilal biçişi · <kbd>E</kbd> Ruh dalgası<br><kbd>R</kbd> Gölge sıçrayışı · <kbd>F</kbd> Ruh patlaması</div><div id="skillbar"><div class="skill" id="skillQ" data-name="HİLAL BİÇİŞİ"><b>Q</b>✦<small>Hazır</small></div><div class="skill" id="skillE" data-name="RUH DALGASI"><b>E</b>❖<small>Hazır</small></div><div class="skill" id="skillR" data-name="GÖLGE SIÇRAYIŞI"><b>R</b>◈<small>Hazır</small></div><div class="skill" id="skillF" data-name="RUH PATLAMASI"><b>F</b>✧<small>Hazır</small></div></div>
+<div id="mmo-location">THE FROSTBOUND CATHEDRAL <span>/ ASHEN FRONTIER</span></div><section id="mmo-quests"><h3>✦ JOURNAL / GÖREVLER</h3><div class="quest-title">Küllerin Arındırılması</div><div class="quest-copy">Katedral avlusundaki lanetlileri temizle.</div><div class="quest-progress"><span id="questfill"></span></div><div class="quest-copy" id="questcount">0 / 12 düşman</div><div class="quest-title" style="margin-top:12px">Kayıp Rahibenin Mührü</div><div class="quest-copy">Piskoposun düşürdüğü emaneti bul.</div><div class="quest-copy" id="questboss">Durum: İz sürülüyor</div></section><canvas id="mmo-map" width="150" height="150"></canvas><div id="mmo-chat"><strong>WORLD / YAKIN SOHBET</strong><div id="mmo-chatlog">[Sistem] Katedral sınırına hoş geldin.<br>[Rehber] Ayazın içindeki ışığı takip et.</div></div><div id="mmo-bottomhint">WASD HAREKET · SOL TIK SALDIRI · SPACE KAÇIN · Q E R F YETENEKLER · I ENVANTER</div><div id="message"></div><div id="lootnotice"></div><div id="bossbar"><div id="bossname">THE HOLLOW BISHOP</div><div id="bosshp"><div id="bosshpfill"></div></div></div><div id="lootpanel"><h3>RELIQUAR / GANİMET</h3><div id="lootlist">Henüz ganimet yok.</div></div>
+<div id="hud"><div class="bars"><div class="orb" id="hpOrb">♥</div><div class="meterbox"><div class="meterlabel"><span>VITALITY</span><span id="hpText">100 / 100</span></div><div class="meter"><div class="fill hp" id="hpFill"></div></div><div class="meterlabel" style="margin-top:8px"><span>SOUL EXPERIENCE</span><span id="xpText">0 / 100</span></div><div class="meter"><div class="fill xp" id="xpFill" style="width:0%"></div></div></div><div class="orb blue">✧</div></div></div>
+<div id="overlay"><div class="panel"><div class="eyebrow">A GOTHIC ACTION RPG PROTOTYPE</div><div class="title">ASHEN VOW</div><div class="rule"></div><p class="desc">Unutulmuş bir katedralin küllerinde uyandın. Tırpanını kuşan, lanetlileri biç ve ruhunu geri kazan.</p><button class="btn" id="start">KARANLIĞA GİR</button><div class="small">WASD ile hareket · Fare ile yönel ve saldır · SPACE ile kaçın<br>Bu prototip masaüstü tarayıcılar için tasarlanmıştır.</div></div></div>
+<div id="levelup"><div class="panel"><div class="eyebrow">A NEW SIN, A NEW GIFT</div><div class="title" style="font-size:32px">RUHUN GÜÇLENİYOR</div><p class="desc">Bir kutsama seç.</p><div class="choices" id="choices"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+(()=>{
+const canvas=document.getElementById('game');
+let W=innerWidth,H=innerHeight,dpr=Math.min(devicePixelRatio||1,2);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+renderer.setPixelRatio(dpr);renderer.setSize(W,H);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x8397ad);scene.fog=new THREE.FogExp2(0x8397ad,.008);
+const camera=new THREE.PerspectiveCamera(42,W/H,.1,900);camera.position.set(0,22,18);
+const hemi=new THREE.HemisphereLight(0xd8e5ff,0x272b38,1.65);scene.add(hemi);
+const moon=new THREE.DirectionalLight(0xc7d9f2,2.4);moon.position.set(-25,45,-20);moon.castShadow=true;moon.shadow.mapSize.set(2048,2048);moon.shadow.camera.left=-55;moon.shadow.camera.right=55;moon.shadow.camera.top=55;moon.shadow.camera.bottom=-55;scene.add(moon);
+const fireLight=new THREE.PointLight(0xff8b43,2.4,28);scene.add(fireLight);
+const groundMat=new THREE.MeshStandardMaterial({color:0x343b47,roughness:1});
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(1200,1200),groundMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.12;ground.receiveShadow=true;scene.add(ground);
+const grid=new THREE.GridHelper(1200,120,0x687487,0x536071);grid.position.y=-.105;grid.material.opacity=.08;grid.material.transparent=true;scene.add(grid);
+const worldProps=new THREE.Group();scene.add(worldProps);
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const stoneMats=[0x343039,0x292830,0x403840,0x24242c].map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.9}));
+function addPillar(x,z,h=8){const g=new THREE.Group();const mat=stoneMats[Math.floor(Math.random()*stoneMats.length)];const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.65,.9,h,6),mat);shaft.position.y=h/2;shaft.castShadow=true;shaft.receiveShadow=true;g.add(shaft);const cap=new THREE.Mesh(new THREE.BoxGeometry(2.2,.55,2.2),stoneMats[2]);cap.position.y=h+.1;cap.castShadow=true;g.add(cap);const base=new THREE.Mesh(new THREE.BoxGeometry(2.3,.45,2.3),stoneMats[1]);base.position.y=.2;g.add(base);g.position.set(x,0,z);worldProps.add(g)}
+function addRuins(){
+ const bark=new THREE.MeshStandardMaterial({color:0x17171d,roughness:1}),dead=new THREE.MeshStandardMaterial({color:0x28252d,roughness:1});
+ for(let i=0;i<95;i++){let a=Math.random()*Math.PI*2,r=rnd(34,155),x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.abs(x)<23&&Math.abs(z)<23)continue;let h=rnd(8,18);const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.18,.65,h,7),bark);trunk.position.set(x,h/2,z);trunk.castShadow=true;worldProps.add(trunk);for(let k=0;k<4;k++){let branch=new THREE.Mesh(new THREE.CylinderGeometry(.035,.18,rnd(3,6),5),bark);branch.position.set(x+rnd(-1.4,1.4),h*.62+k*.6,z+rnd(-1.4,1.4));branch.rotation.z=rnd(-.9,.9);branch.rotation.x=rnd(-.7,.7);branch.castShadow=true;worldProps.add(branch)}}
+ // Broken gothic arches and cathedral fragments framing the clearing
+ for(let side of [-1,1])for(let j=0;j<5;j++){let x=side*(28+j*7),z=-42-j*20;addPillar(x,z,rnd(7,12));if(j<4){let arch=new THREE.Mesh(new THREE.TorusGeometry(5,.32,7,18,Math.PI),dead);arch.position.set(x+side*3.5,8,z);arch.rotation.z=Math.PI;arch.scale.set(1.1,1.25,1);arch.castShadow=true;worldProps.add(arch)}}
+ // scattered gravestones
+ for(let i=0;i<36;i++){let a=Math.random()*Math.PI*2,r=rnd(22,78),x=Math.cos(a)*r,z=Math.sin(a)*r;let stone=new THREE.Mesh(new THREE.BoxGeometry(rnd(.8,1.5),rnd(1.2,2.8),.35),dead);stone.position.set(x,stone.geometry.parameters.height/2,z);stone.rotation.y=rnd(-.5,.5);stone.castShadow=true;worldProps.add(stone)}
+ // Jagged rubble, scorched earth, blood-dark pools and battlefield debris
+ const rubbleMat=[0x17171b,0x343039,0x211c22,0x493b3d].map(c=>new THREE.MeshStandardMaterial({color:c,roughness:1}));
+ const rockGeo=new THREE.DodecahedronGeometry(1,0);
+ for(let i=0;i<150;i++){let a=Math.random()*Math.PI*2,r=rnd(9,92),x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.abs(x)<5&&Math.abs(z)<5)continue;let rock=new THREE.Mesh(rockGeo,rubbleMat[i%rubbleMat.length]);rock.position.set(x,rnd(.15,.65),z);rock.scale.set(rnd(.3,1.5),rnd(.2,.8),rnd(.3,1.2));rock.rotation.set(rnd(0,2),rnd(0,3),rnd(0,2));rock.castShadow=true;rock.receiveShadow=true;worldProps.add(rock)}
+ const bloodMat=new THREE.MeshStandardMaterial({color:0x260b12,roughness:.3,metalness:.05,transparent:true,opacity:.78});
+ for(let i=0;i<22;i++){let a=Math.random()*Math.PI*2,r=rnd(8,75),pool=new THREE.Mesh(new THREE.CircleGeometry(rnd(1.1,3.4),18),bloodMat);pool.rotation.x=-Math.PI/2;pool.position.set(Math.cos(a)*r,.012,Math.sin(a)*r);pool.scale.y=rnd(.35,.8);worldProps.add(pool)}
+ // Broken barricades and hanging funeral banners
+ const wood=new THREE.MeshStandardMaterial({color:0x211719,roughness:1}),banner=new THREE.MeshStandardMaterial({color:0x38151e,roughness:1,side:THREE.DoubleSide});
+ for(let i=0;i<14;i++){let a=i*Math.PI*2/14,x=Math.cos(a)*rnd(24,55),z=Math.sin(a)*rnd(24,55);let pole=new THREE.Mesh(new THREE.CylinderGeometry(.09,.14,6,6),wood);pole.position.set(x,3,z);pole.rotation.z=rnd(-.12,.12);pole.castShadow=true;worldProps.add(pole);let cloth=new THREE.Mesh(new THREE.PlaneGeometry(1.8,3.1,4,5),banner);cloth.position.set(x+.9,4.2,z);cloth.rotation.y=a;cloth.rotation.z=.08;worldProps.add(cloth)}
+ // Fire altars at the edge of the ruined sanctuary
+ for(let i=0;i<10;i++){let a=i*Math.PI*2/10,x=Math.cos(a)*21,z=Math.sin(a)*21;const brazier=new THREE.Mesh(new THREE.CylinderGeometry(.38,.65,1.6,7),stoneMats[1]);brazier.position.set(x,.8,z);brazier.castShadow=true;worldProps.add(brazier);const flame=new THREE.Mesh(new THREE.ConeGeometry(.28,.9,7),new THREE.MeshBasicMaterial({color:0xff7135}));flame.position.set(x,2,z);worldProps.add(flame);const glow=new THREE.PointLight(0xff542a,1.7,10);glow.position.set(x,2.2,z);worldProps.add(glow)}
+}
+addRuins();
+const candleGroup=new THREE.Group();scene.add(candleGroup);
+for(let i=0;i<18;i++){let a=i*Math.PI*2/18,x=Math.cos(a)*17,z=Math.sin(a)*17;const stand=new THREE.Mesh(new THREE.CylinderGeometry(.18,.28,1.4,7),stoneMats[2]);stand.position.set(x,.7,z);stand.castShadow=true;candleGroup.add(stand);const flame=new THREE.Mesh(new THREE.SphereGeometry(.16,8,8),new THREE.MeshBasicMaterial({color:0xffa34f}));flame.position.set(x,1.55,z);candleGroup.add(flame)}
+function resize(){W=innerWidth;H=innerHeight;renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.setSize(W,H);camera.aspect=W/H;camera.updateProjectionMatrix()}
+addEventListener('resize',resize);resize();
+const keys={},mouse={x:W/2+100,y:H/2,down:false};
+addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ShiftLeft','ShiftRight'].includes(e.code))e.preventDefault()});
+addEventListener('keyup',e=>keys[e.code]=false);
+canvas.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+canvas.addEventListener('mousedown',()=>mouse.down=true);addEventListener('mouseup',()=>mouse.down=false);
+const rand=(a,b)=>a+Math.random()*(b-a),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+let player,enemies,particles,decals,loot,inventory,gameOn=false,last=0,spawn=0,attack=0,dash=0,burst=0,shake=0,kills=0,wave=1,level=1,xp=0,xpNeed=100,gameTime=0,bossSpawnedWave=0,combo=0,comboTimer=0,skillCD={q:0,e:0,r:0,f:0},skillFx=[];
+const ui=id=>document.getElementById(id);
+function reset(){skillCD={q:0,e:0,r:0,f:0};skillFx.forEach(o=>scene.remove(o.mesh));skillFx=[];player={x:0,y:0,r:.55,hp:100,maxHp:100,speed:5.4,damage:34,range:5.3,atkRate:.34,regen:0,inv:0,walkPhase:0,moveAmount:0};enemies=[];particles=[];decals=[];loot=[];inventory=[];try{inventory=JSON.parse(localStorage.getItem('ashenVowInventory')||'[]')}catch(e){inventory=[]}
+kills=0;wave=1;level=1;xp=0;xpNeed=100;spawn=0;gameTime=0;bossSpawnedWave=0;
+inventory.forEach(i=>{if(i.stat==='damage')player.damage+=i.value;if(i.stat==='health'){player.maxHp+=i.value;player.hp+=i.value}if(i.stat==='speed')player.speed+=i.value*.04});
+updateHud();updateMMO();renderLoot();ui('bossbar').style.display='none'}
+function say(s){ui('message').textContent=s;ui('message').style.opacity=1;clearTimeout(say.t);say.t=setTimeout(()=>ui('message').style.opacity=0,1700)}
+function particle(x,y,color,n=8,power=100){for(let i=0;i<n;i++){let a=rand(0,Math.PI*2),v=rand(power*.25,power);particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rand(.25,.65),max:.65,color,r:rand(1,3)})}}
+function spawnEnemy(boss=false){let a=rand(0,Math.PI*2),rad=rand(13,19);let hp=boss?950+wave*100:(wave>1?48+(wave-1)*9:48);enemies.push({x:player.x+Math.cos(a)*rad,y:player.y+Math.sin(a)*rad,r:boss?.95:.48,hp,max:hp,speed:boss?1.05:rand(1.05,1.55)+wave*.035,damage:boss?24:9+wave,hit:0,attackCD:rand(.35,1.1),windup:0,kind:boss?'bishop':Math.random()<.18?'wraith':'ghoul',phase:rand(0,6),boss})}
+function dropLoot(x,y,boss=false){let pool=boss?[['BISHOP’S RELIC','damage',18,'Efsanevi'],['ASHEN CROWN','health',35,'Efsanevi'],['SOULBOUND BOOTS','speed',35,'Efsanevi']]:[['Paslı Tılsım','damage',5,'Sıradan'],['Kül Parçası','health',8,'Sıradan'],['Sessiz Adım','speed',10,'Nadir']];let item=pool[Math.floor(Math.random()*pool.length)];loot.push({x,y,name:item[0],stat:item[1],value:item[2],rarity:item[3],life:22});particle(x,y,boss?'#e2bd78':'#b2a0ce',14,90)}
+function renderLoot(){ui('lootlist').innerHTML=inventory.length?inventory.slice(-5).reverse().map(i=>'<div class="lootline"><span>'+i.name+'</span><em>'+i.rarity+'</em></div>').join(''):'Henüz ganimet yok.'}
+function collectLoot(){loot.forEach(item=>{item.life-=.016;if(dist(item,player)<1.15){inventory.push({name:item.name,stat:item.stat,value:item.value,rarity:item.rarity});try{localStorage.setItem('ashenVowInventory',JSON.stringify(inventory))}catch(e){}if(item.stat==='damage')player.damage+=item.value;if(item.stat==='health'){player.maxHp+=item.value;player.hp=Math.min(player.maxHp,player.hp+item.value)}if(item.stat==='speed')player.speed+=item.value*.04;ui('lootnotice').textContent=item.name+'  ·  '+item.rarity;ui('lootnotice').style.opacity=1;clearTimeout(collectLoot.t);collectLoot.t=setTimeout(()=>ui('lootnotice').style.opacity=0,1500);particle(item.x,item.y,'#d4b77d',12,100)}});loot=loot.filter(i=>i.life>0&&dist(i,player)>=1.15);renderLoot()}
+const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),groundPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0),aimPoint=new THREE.Vector3();function aimWorld(){pointer.set(mouse.x/W*2-1,-(mouse.y/H)*2+1);raycaster.setFromCamera(pointer,camera);raycaster.ray.intersectPlane(groundPlane,aimPoint);return aimPoint}function aimAngle(){const p=aimWorld();return Math.atan2(p.x-player.x,p.z-player.y)}
+function attackNow(){if(attack>0)return;attack=player.atkRate;combo=comboTimer>0?(combo%3)+1:1;comboTimer=1.05;let a=aimAngle(),hit=0;const strikeDamage=player.damage*(combo===3?1.55:combo===2?1.12:1);enemies.forEach(e=>{let dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),ang=Math.atan2(dy,dx),diff=Math.atan2(Math.sin(ang-a),Math.cos(ang-a));if(d<player.range+e.r&&Math.abs(diff)<.72){e.hp-=strikeDamage;e.hit=.22;hit++;particle(e.x,e.y,'#b7d2df',10,145);if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none';say('BOSS YENİLDİ  ·  KUTSAL EMANET DÜŞTÜ')}else if(Math.random()<.22)dropLoot(e.x,e.y,false);particle(e.x,e.y,'#a88b61',16,170);decals.push({x:e.x,y:e.y,r:rand(12,25),a:rand(.2,.5)});}}});enemies=enemies.filter(e=>e.hp>0);if(hit===0)particle(player.x+Math.sin(a)*4,player.y+Math.cos(a)*4,'#a9c5d6',5,65)}
+function dashNow(){if(dash>0)return;dash=.72;player.inv=.32;let dx=(keys.KeyD?1:0)-(keys.KeyA?1:0),dy=(keys.KeyS?1:0)-(keys.KeyW?1:0);if(!dx&&!dy){dx=mouse.x-W/2;dy=mouse.y-H/2}let l=Math.hypot(dx,dy)||1;player.x+=dx/l*5.5;player.y+=dy/l*6.5;particle(player.x,player.y,'#8da6bd',20,150)}
+function soulBurst(){if(burst>0)return;burst=5;let n=0;enemies.forEach(e=>{if(dist(e,player)<8){e.hp-=player.damage*2;n++;particle(e.x,e.y,'#a9c9df',14,180)}});enemies=enemies.filter(e=>{if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none'}else if(Math.random()<.22)dropLoot(e.x,e.y,false);return false}return true});particle(player.x,player.y,'#91b8d3',35,220);say('RUH PATLAMASI  ·  '+n+' HEDEF')}
+
+function skillEffect(x,z,color,radius){const mesh=new THREE.Mesh(new THREE.TorusGeometry(radius,.11,8,48),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.9}));mesh.rotation.x=Math.PI/2;mesh.position.set(x,.16,z);mesh.scale.setScalar(.35);scene.add(mesh);skillFx.push({mesh,life:.48,max:.48})}
+function updateSkillHud(){for(const k of ['q','e','r','f']){const el=ui('skill'+k.toUpperCase()),cd=skillCD[k];el.classList.toggle('cool',cd>0);el.querySelector('small').textContent=cd>0?cd.toFixed(1)+'s':'Hazır'}}
+function useSkill(key){if(!gameOn||skillCD[key]>0)return;const a=aimAngle();let hits=0;
+ if(key==='q'){skillCD.q=4.2;enemies.forEach(e=>{let dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),ang=Math.atan2(dy,dx),diff=Math.atan2(Math.sin(ang-a),Math.cos(ang-a));if(d<7+e.r&&Math.abs(diff)<1.35){e.hp-=player.damage*2.35;e.hit=.25;hits++;particle(e.x,e.y,'#a9e9f3',15,175)}});skillEffect(player.x+Math.sin(a)*2,player.y+Math.cos(a)*2,0x9cecff,5.8);say('HİLAL BİÇİŞİ · '+hits+' HEDEF')}
+ if(key==='e'){skillCD.e=6.5;const tx=Math.sin(a),tz=Math.cos(a),hitSet=new Set();for(let step=1;step<=8;step++){let px=player.x+tx*step*1.15,pz=player.y+tz*step*1.15;enemies.forEach(e=>{if(!hitSet.has(e)&&Math.hypot(e.x-px,e.y-pz)<1.45){hitSet.add(e);e.hp-=player.damage*1.15;e.hit=.22;hits++}})}particle(player.x+tx*7,player.y+tz*7,'#9c8aff',24,190);skillEffect(player.x+tx*5,player.y+tz*5,0x9b8aff,2.3);say('RUH DALGASI · '+hits+' VURUŞ')}
+ if(key==='r'){skillCD.r=8;const tx=Math.sin(a),tz=Math.cos(a);player.x=clamp(player.x+tx*6.5,-208,208);player.y=clamp(player.y+tz*6.5,-208,208);player.inv=.8;dash=.8;skillEffect(player.x,player.y,0x72cfff,3.2);particle(player.x,player.y,'#8bdcff',28,190);say('GÖLGE SIÇRAYIŞI')}
+ if(key==='f'){skillCD.f=14;enemies.forEach(e=>{if(dist(e,player)<9){e.hp-=player.damage*2.2;e.hit=.3;hits++;particle(e.x,e.y,'#d9b6ff',18,210)}});skillEffect(player.x,player.y,0xb99cff,10);particle(player.x,player.y,'#d0b7ff',48,240);say('RUH PATLAMASI · '+hits+' HEDEF')}
+ enemies=enemies.filter(e=>{if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none'}else if(Math.random()<.22)dropLoot(e.x,e.y,false);return false}return true});updateHud();updateSkillHud();updateMMO()}
+function levelUp(){level++;xp-=xpNeed;xpNeed=Math.floor(xpNeed*1.35);gameOn=false;let options=[['KAN YEMİNİ','Azami can +25',()=>{player.maxHp+=25;player.hp=Math.min(player.maxHp,player.hp+25)}],['KIRIK AY','Tırpan hasarı +12',()=>player.damage+=12],['KÜL ADIMI','Hareket hızı +25',()=>player.speed+=.65],['AÇ RUH','Ruh patlaması bekleme süresi azalır',()=>burst=Math.max(0,burst-2)],['SON NEFES','Saniyede 1.5 can yenile',()=>player.regen+=1.5],['KESKİN YAY','Saldırı hızı artar',()=>player.atkRate=Math.max(.2,player.atkRate-.06)]].sort(()=>Math.random()-.5).slice(0,3);ui('choices').innerHTML='';options.forEach(o=>{let b=document.createElement('button');b.className='choice';b.innerHTML='<b>'+o[0]+'</b><span>'+o[1]+'</span>';b.onclick=()=>{o[2]();ui('levelup').style.display='none';gameOn=true;say('SEVİYE '+level)};ui('choices').appendChild(b)});ui('levelup').style.display='flex'}
+const mapCanvas=ui('mmo-map'),mapCtx=mapCanvas.getContext('2d');function drawMiniMap(){if(!player)return;const c=mapCtx;c.clearRect(0,0,150,150);c.fillStyle='#0b111b';c.fillRect(0,0,150,150);c.strokeStyle='#39485c';for(let i=0;i<=150;i+=25){c.beginPath();c.moveTo(i,0);c.lineTo(i,150);c.stroke();c.beginPath();c.moveTo(0,i);c.lineTo(150,i);c.stroke()}enemies.forEach(e=>{let x=75+(e.x-player.x)*.7,y=75+(e.y-player.y)*.7;if(x>2&&x<148&&y>2&&y<148){c.fillStyle=e.boss?'#e4a65c':'#a84955';c.beginPath();c.arc(x,y,e.boss?4:2,0,Math.PI*2);c.fill()}});c.fillStyle='#d9eaff';c.beginPath();c.arc(75,75,4,0,Math.PI*2);c.fill();c.strokeStyle='#d9eaff';c.beginPath();c.moveTo(75,75);c.lineTo(75+Math.sin(aimAngle())*11,75+Math.cos(aimAngle())*11);c.stroke();c.strokeStyle='#9b8965';c.strokeRect(.5,.5,149,149)}function updateMMO(){if(!player)return;ui('questcount').textContent=Math.min(kills,12)+' / 12 düşman';ui('questfill').style.width=Math.min(100,kills/12*100)+'%';ui('questboss').textContent=inventory.some(i=>i.rarity==='Efsanevi')?'Durum: Mühür ele geçirildi':'Durum: Piskopos bekleniyor';drawMiniMap()}function updateHud(){ui('lv').textContent=level;ui('kills').textContent=kills;ui('wave').textContent=wave;ui('hpText').textContent=Math.ceil(player.hp)+' / '+player.maxHp;ui('hpFill').style.width=player.hp/player.maxHp*100+'%';ui('xpText').textContent=xp+' / '+xpNeed;ui('xpFill').style.width=xp/xpNeed*100+'%'}
+function update(dt){if(!gameOn)return;gameTime+=dt;attack=Math.max(0,attack-dt);dash=Math.max(0,dash-dt);burst=Math.max(0,burst-dt);comboTimer=Math.max(0,comboTimer-dt);for(const k of ['q','e','r','f'])skillCD[k]=Math.max(0,skillCD[k]-dt);player.inv=Math.max(0,player.inv-dt);player.hp=Math.min(player.maxHp,player.hp+player.regen*dt);
+let sx=(keys.KeyD?1:0)-(keys.KeyA?1:0),sy=(keys.KeyS?1:0)-(keys.KeyW?1:0);let moving=!!(sx||sy);player.moveAmount+=((moving?1:0)-player.moveAmount)*Math.min(1,dt*4.5);if(moving)player.walkPhase+=dt*3.2;let l=Math.hypot(sx,sy)||1;player.x+=sx/l*player.speed*dt;player.y+=sy/l*player.speed*dt;player.x=clamp(player.x,-210,210);player.y=clamp(player.y,-210,210);
+if(keys.Space){keys.Space=false;dashNow()}if(keys.ShiftLeft||keys.ShiftRight){keys.ShiftLeft=keys.ShiftRight=false;useSkill('f')}for(const k of ['q','e','r','f']){const code={q:'KeyQ',e:'KeyE',r:'KeyR',f:'KeyF'}[k];if(keys[code]){keys[code]=false;useSkill(k)}}if(mouse.down)attackNow();
+spawn-=dt;if(spawn<=0){spawnEnemy();spawn=Math.max(.42,1.35-wave*.055)}
+if(wave%5===0&&bossSpawnedWave!==wave){bossSpawnedWave=wave;spawnEnemy(true);ui('bossbar').style.display='block';say('KATEDRALİN PİSKOPOSU UYANDI')}
+if(kills>=wave*12){wave++;say('DALGA '+wave+'  ·  LANET DERİNLEŞİYOR')}
+collectLoot();
+let bossNow=enemies.find(e=>e.boss);if(bossNow){ui('bossbar').style.display='block';ui('bosshpfill').style.width=(bossNow.hp/bossNow.max*100)+'%'}else ui('bossbar').style.display='none';enemies.forEach(e=>{e.hit=Math.max(0,e.hit-dt);let dx=player.x-e.x,dy=player.y-e.y,l=Math.hypot(dx,dy)||1;e.x+=dx/l*e.speed*dt;e.y+=dy/l*e.speed*dt;if(e.windup>0){e.windup-=dt;if(e.windup<=0&&l<player.r+e.r+1.05&&player.inv<=0){player.hp-=e.damage;let push=Math.max(1,l);player.x+=dx/push*.9;player.y+=dy/push*.9;shake=5;particle(player.x,player.y,'#a83c46',9,110)}}else if(l<player.r+e.r+1.25){e.attackCD-=dt;if(e.attackCD<=0){e.windup=e.boss?.62:.48;e.attackCD=e.boss?1.8:2.15;particle(e.x,e.y,e.boss?'#d17a54':'#a65b64',7,75)}}if(player.hp<=0){player.hp=0;gameOn=false;ui('overlay').style.display='flex';ui('overlay').querySelector('.eyebrow').textContent='YOUR PENANCE IS NOT OVER';ui('overlay').querySelector('.title').textContent='YOU HAVE FALLEN';ui('overlay').querySelector('.desc').textContent='Lanetliler seni yuttu. '+kills+' ruh topladın, '+level+'. seviyeye ulaştın.';ui('start').textContent='YENİDEN DENE'}});
+skillFx.forEach(fx=>{fx.life-=dt;let t=1-fx.life/fx.max;fx.mesh.scale.setScalar(.35+t*2.8);fx.mesh.material.opacity=Math.max(0,1-t)});skillFx=skillFx.filter(fx=>{if(fx.life<=0){scene.remove(fx.mesh);fx.mesh.geometry.dispose();fx.mesh.material.dispose();return false}return true});particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.96;p.vy*=.96;p.life-=dt});particles=particles.filter(p=>p.life>0);shake=Math.max(0,shake-dt*12);if(xp>=xpNeed)levelUp();updateHud();updateSkillHud()}
+const actorMeshes=new Map();
+function makeWarrior(isBoss=false,isPlayer=false){
+ const root=new THREE.Group();
+ const gown=new THREE.MeshStandardMaterial({color:isPlayer?0x0b0d14:0x30232a,roughness:.96});
+ const rag=new THREE.MeshStandardMaterial({color:0x29252d,roughness:1});
+ const leather=new THREE.MeshStandardMaterial({color:0x302a30,roughness:.85});
+ const silver=new THREE.MeshStandardMaterial({color:0x8f9bad,metalness:.78,roughness:.28});
+ const pale=new THREE.MeshStandardMaterial({color:0xd9dce5,roughness:.72});
+ const skin=new THREE.MeshStandardMaterial({color:0xd8d0d2,roughness:.8});
+ const dark=new THREE.MeshStandardMaterial({color:0x09090e,roughness:1});
+ const ice=new THREE.MeshStandardMaterial({color:0xd9efff,metalness:.86,roughness:.18,emissive:0x314c68,emissiveIntensity:.7});
+ // Tall, narrow silhouette beneath a deep, sculpted veil
+ const skirt=new THREE.Mesh(new THREE.ConeGeometry(1.18,3.05,14,1),gown);skirt.position.y=1.48;skirt.scale.z=.78;skirt.castShadow=true;root.add(skirt);
+ const innerSkirt=new THREE.Mesh(new THREE.ConeGeometry(.78,2.5,10),rag);innerSkirt.position.set(0,1.52,.08);innerSkirt.scale.z=.8;root.add(innerSkirt);
+ for(let i=0;i<9;i++){let panel=new THREE.Mesh(new THREE.BoxGeometry(.12,rnd(1.5,2.5),.1),i%2?rag:gown);panel.position.set(Math.sin(i*2.4)*.65,.8+Math.random()*.4,Math.cos(i*2.4)*.55);panel.rotation.z=rnd(-.22,.22);panel.castShadow=true;root.add(panel)}
+ const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.34,.78,6,10),leather);torso.position.y=2.72;torso.castShadow=true;root.add(torso);
+ // Layered breastplate, rivets and asymmetric shoulder protection
+ const breast=new THREE.Mesh(new THREE.BoxGeometry(.56,.66,.16),silver);breast.position.set(0,2.83,.29);breast.scale.set(.88,1,.7);breast.castShadow=true;root.add(breast);
+ const cuirass=new THREE.Mesh(new THREE.CapsuleGeometry(.39,.5,4,8),leather);cuirass.position.set(0,2.72,.22);cuirass.scale.set(1,.9,.48);root.add(cuirass);
+ for(let side of [-1,1]){const pauldron=new THREE.Mesh(new THREE.SphereGeometry(.31,10,8),side<0?silver:leather);pauldron.scale.set(1,.48,1.15);pauldron.position.set(side*.58,3.02,.03);pauldron.castShadow=true;root.add(pauldron);for(let j=0;j<3;j++){let rivet=new THREE.Mesh(new THREE.SphereGeometry(.035,6,6),silver);rivet.position.set(side*(.48+j*.08),2.96+j*.035,.28);root.add(rivet)}}
+ const gorget=new THREE.Mesh(new THREE.TorusGeometry(.29,.055,7,18),silver);gorget.position.set(0,3.13,.04);gorget.rotation.x=Math.PI/2;root.add(gorget);
+ const mantle=new THREE.Mesh(new THREE.ConeGeometry(.92,1.4,9),gown);mantle.position.set(0,2.72,-.22);mantle.rotation.x=-.18;mantle.castShadow=true;root.add(mantle);
+ // Hood and pale, partially shadowed face
+ const hood=new THREE.Mesh(new THREE.SphereGeometry(.52,14,12),dark);hood.scale.set(1.12,1.32,1.08);hood.position.set(0,3.62,-.04);hood.castShadow=true;root.add(hood);
+ const hoodRim=new THREE.Mesh(new THREE.TorusGeometry(.43,.075,8,18,Math.PI),silver);hoodRim.position.set(0,3.52,.25);hoodRim.rotation.z=Math.PI;root.add(hoodRim);
+ const face=new THREE.Mesh(new THREE.SphereGeometry(.29,12,10),skin);face.scale.set(.8,1.22,.62);face.position.set(0,3.43,.32);root.add(face);
+ const veil=new THREE.Mesh(new THREE.ConeGeometry(.44,.68,9),dark);veil.position.set(0,3.14,.26);veil.rotation.x=.12;root.add(veil);
+ // Long silver hair strands escaping the hood
+ for(let side of [-1,1])for(let j=0;j<7;j++){let len=rnd(1.65,2.65);let hair=new THREE.Mesh(new THREE.CylinderGeometry(.012,.052,len,6),pale);hair.position.set(side*(.24+j*.052),2.62-rnd(0,.35),.19+j*.022);hair.rotation.z=side*(.1+j*.045);hair.rotation.x=.2;root.add(hair)}
+ // Narrow shoulders, long sleeves and delicate hands
+ const arms=[],legs=[];
+ for(let side of [-1,1]){const shoulder=new THREE.Mesh(new THREE.SphereGeometry(.3,9,8),gown);shoulder.scale.set(1,.75,.9);shoulder.position.set(side*.53,2.95,0);root.add(shoulder);
+ const sleeve=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.9,5,8),rag);sleeve.position.set(side*.67,2.25,.03);sleeve.rotation.z=side*.12;sleeve.castShadow=true;root.add(sleeve);arms.push(sleeve);
+ const hand=new THREE.Mesh(new THREE.SphereGeometry(.13,8,8),skin);hand.position.set(side*.72,1.68,.08);root.add(hand);
+ const thigh=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.48,5,8),leather);thigh.position.set(side*.23,.73,.04);root.add(thigh);const shin=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.42,5,8),dark);shin.position.set(side*.23,.29,.08);root.add(shin);const boot=new THREE.Mesh(new THREE.BoxGeometry(.27,.18,.48),leather);boot.position.set(side*.23,.12,.22);boot.castShadow=true;root.add(boot);legs.push(thigh)}
+ // Cross pendant, chain and waist bindings
+ const chain=new THREE.Mesh(new THREE.TorusGeometry(.28,.025,6,24),silver);chain.position.set(0,2.75,.34);root.add(chain);
+ const waistPouch=new THREE.Mesh(new THREE.BoxGeometry(.22,.28,.2),leather);waistPouch.position.set(.38,2.08,.2);root.add(waistPouch);const cross=new THREE.Group();const vertical=new THREE.Mesh(new THREE.BoxGeometry(.075,.62,.07),silver);const horizontal=new THREE.Mesh(new THREE.BoxGeometry(.36,.075,.07),silver);horizontal.position.y=.12;cross.add(vertical,horizontal);cross.position.set(0,2.48,.48);root.add(cross);
+ for(let i=0;i<3;i++){let belt=new THREE.Mesh(new THREE.TorusGeometry(.39+i*.025,.035,6,24),i===1?silver:leather);belt.position.y=2.25-i*.1;belt.rotation.x=Math.PI/2;root.add(belt)}
+ // Ornate long scythe with hooked crescent blade
+ const scythe=new THREE.Group();const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.035,.06,3.8,9),leather);shaft.position.y=1.9;shaft.rotation.z=-.08;scythe.add(shaft);
+ for(let y of [.35,1.15,2.2,3.1]){let ring=new THREE.Mesh(new THREE.TorusGeometry(.09,.025,6,12),silver);ring.position.y=y;scythe.add(ring)}
+ const bladeCurve=new THREE.QuadraticBezierCurve3(new THREE.Vector3(0,3.55,0),new THREE.Vector3(1.55,4.15,0),new THREE.Vector3(2.45,2.95,0));
+ const bladeShape=new THREE.Shape();bladeShape.moveTo(0,0);bladeShape.quadraticCurveTo(1.5,.65,2.35,-.1);bladeShape.quadraticCurveTo(1.75,.2,1.25,-.18);bladeShape.quadraticCurveTo(.62,-.36,0,0);const bladeSolid=new THREE.Mesh(new THREE.ExtrudeGeometry(bladeShape,{depth:.075,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.035,bevelThickness:.025}),ice);bladeSolid.position.set(0,3.45,-.04);scythe.add(bladeSolid);const blade=new THREE.Mesh(new THREE.TubeGeometry(bladeCurve,32,.045,8,false),silver);scythe.add(blade);
+ const edgeCurve=new THREE.QuadraticBezierCurve3(new THREE.Vector3(.12,3.55,.015),new THREE.Vector3(1.58,4.03,.015),new THREE.Vector3(2.4,2.95,.015));
+ scythe.add(new THREE.Mesh(new THREE.TubeGeometry(edgeCurve,32,.025,6,false),silver));
+ scythe.position.set(.75,0,.2);scythe.rotation.z=-.12;root.add(scythe);
+ root.userData={legs,arms,scythe,cloak:mantle};return root;
+}
+const playerModel=makeWarrior(false,true);scene.add(playerModel);
+function enemyModel(e){let m=makeWarrior(!!e.boss,false);m.scale.setScalar(e.boss?1.7:.8);if(e.kind==='wraith')m.traverse(o=>{if(o.isMesh&&o.material)o.material=o.material.clone(),o.material.transparent=true,o.material.opacity=.68});scene.add(m);return m}
+let frameDelta=.016;function draw(dt){frameDelta=dt;
+ if(!player)return;
+ const target=new THREE.Vector3(player.x,0,player.y);const desiredCamera=new THREE.Vector3(player.x,22,player.y+18);camera.position.lerp(desiredCamera,1-Math.exp(-4.5*frameDelta));camera.lookAt(target);
+ fireLight.position.set(player.x+7,3,player.y-6);
+ playerModel.position.set(player.x,0,player.y);playerModel.rotation.y=aimAngle();
+ const stride=Math.sin(player.walkPhase)*player.moveAmount;playerModel.userData.legs[0].rotation.x=stride*.65;playerModel.userData.legs[1].rotation.x=-stride*.65;playerModel.userData.arms[0].rotation.x=-stride*.3;playerModel.userData.arms[1].rotation.x=stride*.3;playerModel.position.y=Math.abs(Math.sin(player.walkPhase*2))*.07*player.moveAmount;playerModel.userData.cloak.rotation.z=Math.sin(gameTime*2.1)*.035+stride*.055;playerModel.userData.cloak.rotation.x=-.18+Math.sin(gameTime*2.8)*.025;
+ playerModel.userData.scythe.rotation.z=attack>0?Math.sin((1-attack/player.atkRate)*Math.PI)*1.9:0;
+ playerModel.visible=player.inv<=0||Math.floor(gameTime*18)%2===0;
+ const active=new Set();
+ enemies.forEach((e,i)=>{let id=e;active.add(id);let model=actorMeshes.get(id);if(!model){model=enemyModel(e);actorMeshes.set(id,model)}model.position.set(e.x,0,e.y);model.lookAt(player.x,0,player.y);model.position.y=.06+Math.sin(gameTime*3+e.phase)*.06;if(e.hit>0)model.traverse(o=>{if(o.isMesh&&o.material&&o.material.emissive)o.material.emissive.setHex(0x552233)})});
+ for(const [id,m] of actorMeshes){if(!active.has(id)){scene.remove(m);m.traverse(o=>{if(o.geometry)o.geometry.dispose()});actorMeshes.delete(id)}}
+ renderer.render(scene,camera);
+}
+function loop(t){let dt=Math.min((t-last)/1000||0,.033);last=t;update(dt);draw(dt);requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+ui('start').onclick=()=>{reset();ui('overlay').style.display='none';gameOn=true;say('FROSTBOUND CATHEDRAL · BÖLGEYE GİRİLDİ');updateMMO()};
+addEventListener('keydown',e=>{if(e.code==='KeyI')say('ENVANTER · '+inventory.length+' EMANET');if(e.code==='KeyJ')ui('mmo-quests').style.display=ui('mmo-quests').style.display==='none'?'block':'none'});})();
+</script>
+</body></html>
