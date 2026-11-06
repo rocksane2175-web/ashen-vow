@@ -18,6 +18,10 @@ header{position:fixed;z-index:4;top:18px;left:22px;display:flex;align-items:cent
 .meterbox{flex:1}.meterlabel{display:flex;justify-content:space-between;font:11px Cinzel;letter-spacing:1.4px;color:#c7b89f;margin:0 4px 4px}.meter{height:10px;background:#171417;border:1px solid #695a4b;box-shadow:0 2px 8px #000;overflow:hidden}.fill{height:100%;width:100%;transition:width .15s}.hp{background:linear-gradient(90deg,#5e101c,#c13b43)}.xp{background:linear-gradient(90deg,#80602c,#d7b86d)}
 #stats{position:fixed;right:22px;top:20px;z-index:4;text-align:right;font:11px Cinzel;letter-spacing:1.5px;color:#b8aa97;text-shadow:0 2px 5px #000;line-height:2}
 #help{position:fixed;left:22px;bottom:22px;z-index:4;color:#a69a8d;font-size:14px;line-height:1.55;text-shadow:0 2px 5px #000}
+#skillbar{position:fixed;z-index:5;left:50%;bottom:105px;transform:translateX(-50%);display:flex;gap:9px;pointer-events:none}
+.skill{width:58px;height:58px;position:relative;border:1px solid #9b825e;background:linear-gradient(145deg,#28212aee,#090a10ee);box-shadow:0 3px 14px #000b;display:grid;place-items:center;color:#e6d6bd;font:20px Cinzel}
+.skill b{position:absolute;left:4px;top:2px;font:10px Cinzel;color:#d8bd8c}.skill small{position:absolute;right:4px;bottom:2px;font:10px Cinzel;color:#d8d0c3}.skill.cool{filter:grayscale(.8);opacity:.62}
+.skill:after{content:attr(data-name);position:absolute;top:100%;margin-top:4px;font:9px Cinzel;letter-spacing:.7px;color:#c5b69e;white-space:nowrap}
 kbd{font:11px Cinzel;border:1px solid #77634b;padding:2px 5px;color:#e0cba6;background:#151318}
 #message{position:fixed;top:24%;left:50%;transform:translateX(-50%);z-index:5;text-align:center;font:600 18px Cinzel;letter-spacing:3px;color:#d6c4a5;text-shadow:0 2px 12px #000;opacity:0;transition:opacity .4s;pointer-events:none}
 #overlay{position:fixed;inset:0;z-index:10;background:radial-gradient(ellipse,#17151aee,#050609f5);display:flex;align-items:center;justify-content:center;text-align:center}
@@ -59,7 +63,7 @@ let W=innerWidth,H=innerHeight,dpr=Math.min(devicePixelRatio||1,2);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
 renderer.setPixelRatio(dpr);renderer.setSize(W,H);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x9bbbd0);scene.fog=new THREE.FogExp2(0x9bbbd0,.0065);
-const camera=new THREE.PerspectiveCamera(48,W/H,.1,900);camera.position.set(0,29,28);
+const camera=new THREE.PerspectiveCamera(42,W/H,.1,900);camera.position.set(0,22,18);
 const hemi=new THREE.HemisphereLight(0xc8e7ff,0x59634d,2.0);scene.add(hemi);
 const moon=new THREE.DirectionalLight(0xffe1b2,2.8);moon.position.set(-25,45,-20);moon.castShadow=true;moon.shadow.mapSize.set(2048,2048);moon.shadow.camera.left=-55;moon.shadow.camera.right=55;moon.shadow.camera.top=55;moon.shadow.camera.bottom=-55;scene.add(moon);
 const fireLight=new THREE.PointLight(0xff8b43,2.4,28);scene.add(fireLight);
@@ -175,7 +179,7 @@ const playerModel=makeWarrior(false,true);scene.add(playerModel);
 function enemyModel(e){let m=makeWarrior(!!e.boss,false);m.scale.setScalar(e.boss?1.7:.8);if(e.kind==='wraith')m.traverse(o=>{if(o.isMesh&&o.material)o.material=o.material.clone(),o.material.transparent=true,o.material.opacity=.68});scene.add(m);return m}
 let frameDelta=.016;function draw(dt){frameDelta=dt;
  if(!player)return;
- const target=new THREE.Vector3(player.x,1.45,player.y);const desiredCamera=new THREE.Vector3(player.x,6.4,player.y+9.2);camera.position.lerp(desiredCamera,1-Math.exp(-3.2*frameDelta));camera.lookAt(target);
+ const target=new THREE.Vector3(player.x,0,player.y);const desiredCamera=new THREE.Vector3(player.x,22,player.y+18);camera.position.lerp(desiredCamera,1-Math.exp(-4.5*frameDelta));camera.lookAt(target);
  fireLight.position.set(player.x+7,3,player.y-6);
  playerModel.position.set(player.x,0,player.y);playerModel.rotation.y=aimAngle();
  const stride=Math.sin(player.walkPhase)*player.moveAmount;playerModel.userData.legs[0].rotation.x=stride*.65;playerModel.userData.legs[1].rotation.x=-stride*.65;playerModel.userData.arms[0].rotation.x=-stride*.3;playerModel.userData.arms[1].rotation.x=stride*.3;playerModel.position.y=Math.abs(Math.sin(player.walkPhase*2))*.07*player.moveAmount;playerModel.userData.cloak.rotation.z=Math.sin(gameTime*2.1)*.035+stride*.055;playerModel.userData.cloak.rotation.x=-.18+Math.sin(gameTime*2.8)*.025;
