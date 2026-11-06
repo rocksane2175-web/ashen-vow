@@ -44,32 +44,60 @@ kbd{font:11px Cinzel;border:1px solid #77634b;padding:2px 5px;color:#e0cba6;back
 #bosshpfill{height:100%;width:100%;background:linear-gradient(90deg,#4c101a,#b52b38)}
 #lootnotice{position:fixed;z-index:6;top:34%;left:50%;transform:translateX(-50%);font:13px Cinzel;letter-spacing:2px;color:#d7bd8f;text-shadow:0 2px 12px #000;opacity:0;transition:opacity .4s;pointer-events:none}
 @media(max-width:650px){#lootpanel{right:8px;bottom:8px;width:145px}#help{max-width:52%}}
-:root{--gold:#c7b58d;--red:#9d3440}#stats{top:18px;right:24px;padding:12px 16px;border:1px solid #71634c;background:#10131bdd;min-width:145px}#stats:before{content:'CHARACTER';display:block;color:#c8b58d;letter-spacing:3px;font-size:10px;border-bottom:1px solid #514735;margin-bottom:5px}#help{display:none}#hud{bottom:24px;left:24px;transform:none;width:min(430px,48vw)}#skillbar{bottom:24px;gap:7px}.skill{width:52px;height:52px;border-color:#88775a}#lootpanel{background:#0a0d14e8;border-color:#726448}#mmo-quests{position:fixed;z-index:5;top:104px;right:22px;width:230px;padding:13px 15px;border:1px solid #756448;background:#111722ed;box-shadow:0 8px 30px #0009}#mmo-quests h3{font:11px Cinzel;letter-spacing:2px;color:#d1b98a;margin:0 0 9px}.quest-title{font:14px Cinzel;color:#e4dac9;margin:5px 0}.quest-copy{font-size:13px;color:#a9a6a3;line-height:1.35}.quest-progress{height:5px;background:#28262a;margin-top:8px}.quest-progress span{display:block;height:100%;width:0;background:#b59a67}#mmo-map{position:fixed;z-index:5;right:22px;top:300px;width:150px;height:150px;border:1px solid #8d7958;background:#090d13dd}#mmo-chat{position:fixed;z-index:5;left:22px;bottom:112px;width:260px;height:105px;padding:9px 12px;background:#090c12d9;border-left:2px solid #8c7957;color:#b8b1a7;font-size:13px;pointer-events:none}#mmo-chat strong{font:10px Cinzel;letter-spacing:2px;color:#c8b58d;display:block;margin-bottom:5px}#mmo-location{position:fixed;z-index:4;top:78px;left:24px;color:#d2c5a9;font:11px Cinzel;letter-spacing:2px;text-shadow:0 2px 8px #000}#mmo-location span{color:#8e9bad}#mmo-bottomhint{position:fixed;z-index:4;bottom:91px;left:50%;transform:translateX(-50%);font:10px Cinzel;letter-spacing:1px;color:#a9a19a;white-space:nowrap}@media(max-width:700px){#mmo-quests{top:90px;right:8px;width:165px;padding:9px}#mmo-map{right:8px;top:255px;width:110px;height:110px}#mmo-chat{left:8px;bottom:94px;width:190px;height:80px;font-size:11px}#hud{left:8px;bottom:8px;width:48vw}#skillbar{bottom:8px;left:auto;right:8px;transform:none}.skill{width:39px;height:42px;font-size:15px}#lootpanel{display:none}#stats{right:8px;top:8px;min-width:100px}#mmo-location{left:10px;top:62px;font-size:9px}#mmo-bottomhint{display:none}}</style>
+:root{--gold:#c7b58d;--red:#9d3440}#stats{top:18px;right:24px;padding:12px 16px;border:1px solid #71634c;background:#10131bdd;min-width:145px}#stats:before{content:'CHARACTER';display:block;color:#c8b58d;letter-spacing:3px;font-size:10px;border-bottom:1px solid #514735;margin-bottom:5px}#help{display:none}#hud{bottom:24px;left:24px;transform:none;width:min(430px,48vw)}#skillbar{bottom:24px;gap:7px}.skill{width:52px;height:52px;border-color:#88775a}#lootpanel{background:#0a0d14e8;border-color:#726448}#mmo-quests{position:fixed;z-index:5;top:104px;right:22px;width:230px;padding:13px 15px;border:1px solid #756448;background:#111722ed;box-shadow:0 8px 30px #0009}#mmo-quests h3{font:11px Cinzel;letter-spacing:2px;color:#d1b98a;margin:0 0 9px}.quest-title{font:14px Cinzel;color:#e4dac9;margin:5px 0}.quest-copy{font-size:13px;color:#a9a6a3;line-height:1.35}.quest-progress{height:5px;background:#28262a;margin-top:8px}.quest-progress span{display:block;height:100%;width:0;background:#b59a67}#mmo-map{position:fixed;z-index:5;right:22px;top:300px;width:150px;height:150px;border:1px solid #8d7958;background:#090d13dd}#mmo-chat{position:fixed;z-index:5;left:22px;bottom:112px;width:260px;height:105px;padding:9px 12px;background:#090c12d9;border-left:2px solid #8c7957;color:#b8b1a7;font-size:13px;pointer-events:none}#mmo-chat strong{font:10px Cinzel;letter-spacing:2px;color:#c8b58d;display:block;margin-bottom:5px}#mmo-location{position:fixed;z-index:4;top:78px;left:24px;color:#d2c5a9;font:11px Cinzel;letter-spacing:2px;text-shadow:0 2px 8px #000}#mmo-location span{color:#8e9bad}#mmo-bottomhint{position:fixed;z-index:4;bottom:91px;left:50%;transform:translateX(-50%);font:10px Cinzel;letter-spacing:1px;color:#a9a19a;white-space:nowrap}@media(max-width:700px){#mmo-quests{top:90px;right:8px;width:165px;padding:9px}#mmo-map{right:8px;top:255px;width:110px;height:110px}#mmo-chat{left:8px;bottom:94px;width:190px;height:80px;font-size:11px}#hud{left:8px;bottom:8px;width:48vw}#skillbar{bottom:8px;left:auto;right:8px;transform:none}.skill{width:39px;height:42px;font-size:15px}#lootpanel{display:none}#stats{right:8px;top:8px;min-width:100px}#mmo-location{left:10px;top:62px;font-size:9px}#mmo-bottomhint{display:none}}
+:root{--gold:#c7b58d;--line:rgba(190,174,143,.38);--panel:rgba(8,11,17,.86)}
+html,body{background:#070910;color:#e9e3dc}#game{background:#080b12}
+.vignette{background:radial-gradient(ellipse at 50% 48%,transparent 25%,#020308ed 100%)}
+header{top:22px;left:26px;gap:18px}.sig{border-color:#a38b68;color:#d8c6a3;background:#080b12d9;box-shadow:0 0 24px #9bb8d022}
+.brand{font-size:20px;letter-spacing:5px}.sub{font-size:10px;letter-spacing:3px;color:#9eabb9}
+#stats{top:20px;right:24px;min-width:164px;padding:13px 17px;border:1px solid var(--line);background:linear-gradient(135deg,#10141def,#05070cdd);box-shadow:0 12px 36px #0008;backdrop-filter:blur(12px);font-size:10px;letter-spacing:2px}
+#stats:before{content:'VESPER · CHARACTER';display:block;color:#c8b58d;letter-spacing:3px;font-size:9px;border-bottom:1px solid #77664a66;margin-bottom:5px}
+#mmo-location{top:82px;left:27px;font-size:10px;letter-spacing:3px;color:#d6d0c6}#mmo-location span{color:#8da1b3}
+#mmo-quests{top:126px;right:24px;width:244px;padding:16px 17px;border:1px solid var(--line);background:linear-gradient(145deg,#0d1117ed,#05080edb);box-shadow:0 14px 38px #0008;backdrop-filter:blur(10px)}
+#mmo-quests h3{font-size:10px;letter-spacing:2.5px;color:#c9b88f;border-bottom:1px solid #a48d6738;padding-bottom:9px}.quest-title{font-size:13px;color:#e6dfd4}.quest-copy{font-size:13px;color:#a8adb5}.quest-progress{height:4px;background:#252832}.quest-progress span{background:linear-gradient(90deg,#788ea4,#d0b98c)}
+#mmo-map{right:24px;bottom:178px;top:auto;width:142px;height:142px;border:1px solid var(--line);background:#080c13d9;box-shadow:0 8px 28px #0009}
+#mmo-chat{left:24px;bottom:126px;width:270px;height:94px;padding:11px 14px;border:1px solid #a48d6738;border-left:2px solid #9f8a67;background:#080c12d9;backdrop-filter:blur(8px);font-size:13px;color:#aeb6bf}#mmo-chat strong{font-size:9px;letter-spacing:2.5px;color:#c8b58d}
+#hud{left:24px;bottom:22px;width:min(430px,42vw);transform:none}.bars{gap:12px}.orb{width:55px;height:55px;border:1px solid #a78b70;box-shadow:0 0 24px #8d263544,inset 0 0 16px #000}.orb.blue{border-color:#7896ac;box-shadow:0 0 24px #244b8b55}
+.meterlabel{font-size:9px;letter-spacing:2px;color:#d1c6b5}.meter{height:8px;border:1px solid #71634d;background:#11141b}.hp{background:linear-gradient(90deg,#581522,#c45a65)}.xp{background:linear-gradient(90deg,#526f87,#c5ad7e)}
+#skillbar{left:50%;bottom:22px;transform:translateX(-50%);gap:8px}.skill{width:54px;height:54px;border:1px solid #86785f;background:linear-gradient(145deg,#1e222cee,#06090ff5);box-shadow:0 6px 20px #000a;backdrop-filter:blur(8px)}.skill b{color:#d7c394;font-size:9px}.skill small{font-size:9px}.skill:after{font-size:8px;letter-spacing:1px}
+#lootpanel{right:24px;bottom:22px;border:1px solid var(--line);background:#090d14e8;backdrop-filter:blur(10px)}
+#bossbar{top:26px;width:min(440px,48vw)}#bossname{font-size:10px;letter-spacing:4px;color:#d0b88d}
+#message{top:23%;font-size:15px;letter-spacing:4px;color:#d9c8a7}#lootnotice{font-size:11px;letter-spacing:3px}
+#overlay{background:radial-gradient(ellipse at 50% 42%,#1e222bbb,#04060bf7 72%);backdrop-filter:blur(3px)}
+.panel{position:relative;width:min(620px,92vw);padding:48px 44px;border:1px solid #a18b684f;background:linear-gradient(145deg,#13161ef0,#05070cf7);box-shadow:0 24px 100px #000c,0 0 70px #9fb5c00b;backdrop-filter:blur(18px)}
+.panel:before,.panel:after{content:'';position:absolute;width:38px;height:38px;border-color:#b69d70;border-style:solid;opacity:.75}.panel:before{left:9px;top:9px;border-width:1px 0 0 1px}.panel:after{right:9px;bottom:9px;border-width:0 1px 1px 0}
+.eyebrow{font-size:9px;letter-spacing:6px;color:#bda77f}.title{font-size:clamp(42px,8vw,72px);letter-spacing:7px;color:#eee9e0;text-shadow:0 0 35px #9eb4c033}.rule{width:150px;background:linear-gradient(90deg,transparent,#b69c6d,transparent)}.desc{font-size:18px;color:#c0c1c4;line-height:1.65}.btn{padding:15px 34px;border:1px solid #b69b6b;background:linear-gradient(135deg,#4b202b,#17121a);font-size:11px;letter-spacing:4px;box-shadow:0 8px 24px #0008}.small{color:#9099a5;font-size:12px}
+#levelup{backdrop-filter:blur(8px)}.choice{border:1px solid var(--line);background:#101620}.choice b{color:#d4bd8d}
+#model-status{position:fixed;z-index:12;left:50%;top:18px;transform:translateX(-50%);font:9px Cinzel;letter-spacing:2px;color:#b7c9d7;background:#080d14d9;border:1px solid #71869b66;padding:7px 12px;pointer-events:none;transition:opacity .8s}
+@media(max-width:700px){header{left:12px;top:12px}.brand{font-size:14px;letter-spacing:3px}#stats{right:9px;top:9px;min-width:112px;padding:8px;font-size:8px}#mmo-quests{right:8px;top:92px;width:160px;padding:9px}#mmo-map{right:8px;bottom:145px;width:104px;height:104px}#mmo-chat{left:8px;bottom:90px;width:185px;height:74px;font-size:10px}#hud{left:8px;bottom:8px;width:48vw}.orb{width:42px;height:42px}#skillbar{right:8px;bottom:8px;left:auto;transform:none;gap:4px}.skill{width:39px;height:42px;font-size:15px}#lootpanel{display:none}#mmo-location{left:12px;top:58px;font-size:8px}#mmo-bottomhint{display:none}.panel{padding:35px 22px}}
+</style>
 </head>
 <body>
-<canvas id="game"></canvas><div class="vignette"></div>
+<canvas id="game"></canvas><div class="vignette"></div><div id="model-status">VESPER · MODEL YÜKLENİYOR</div>
 <header><div class="sig"><span>✠</span></div><div><div class="brand">ASHEN VOW</div><div class="sub">THE SILENT PENANCE</div></div></header>
 <div id="stats">LEVEL <span id="lv">1</span><br>SOULS <span id="kills">0</span><br>WAVE <span id="wave">1</span></div>
 <div id="help"><kbd>W A S D</kbd> Hareket &nbsp; <kbd>FARE</kbd> Normal saldırı<br><kbd>Q</kbd> Hilal biçişi · <kbd>E</kbd> Ruh dalgası<br><kbd>R</kbd> Gölge sıçrayışı · <kbd>F</kbd> Ruh patlaması</div><div id="skillbar"><div class="skill" id="skillQ" data-name="HİLAL BİÇİŞİ"><b>Q</b>✦<small>Hazır</small></div><div class="skill" id="skillE" data-name="RUH DALGASI"><b>E</b>❖<small>Hazır</small></div><div class="skill" id="skillR" data-name="GÖLGE SIÇRAYIŞI"><b>R</b>◈<small>Hazır</small></div><div class="skill" id="skillF" data-name="RUH PATLAMASI"><b>F</b>✧<small>Hazır</small></div></div>
 <div id="mmo-location">THE FROSTBOUND CATHEDRAL <span>/ ASHEN FRONTIER</span></div><section id="mmo-quests"><h3>✦ JOURNAL / GÖREVLER</h3><div class="quest-title">Küllerin Arındırılması</div><div class="quest-copy">Katedral avlusundaki lanetlileri temizle.</div><div class="quest-progress"><span id="questfill"></span></div><div class="quest-copy" id="questcount">0 / 12 düşman</div><div class="quest-title" style="margin-top:12px">Kayıp Rahibenin Mührü</div><div class="quest-copy">Piskoposun düşürdüğü emaneti bul.</div><div class="quest-copy" id="questboss">Durum: İz sürülüyor</div></section><canvas id="mmo-map" width="150" height="150"></canvas><div id="mmo-chat"><strong>WORLD / YAKIN SOHBET</strong><div id="mmo-chatlog">[Sistem] Katedral sınırına hoş geldin.<br>[Rehber] Ayazın içindeki ışığı takip et.</div></div><div id="mmo-bottomhint">WASD HAREKET · SOL TIK SALDIRI · SPACE KAÇIN · Q E R F YETENEKLER · I ENVANTER</div><div id="message"></div><div id="lootnotice"></div><div id="bossbar"><div id="bossname">THE HOLLOW BISHOP</div><div id="bosshp"><div id="bosshpfill"></div></div></div><div id="lootpanel"><h3>RELIQUAR / GANİMET</h3><div id="lootlist">Henüz ganimet yok.</div></div>
 <div id="hud"><div class="bars"><div class="orb" id="hpOrb">♥</div><div class="meterbox"><div class="meterlabel"><span>VITALITY</span><span id="hpText">100 / 100</span></div><div class="meter"><div class="fill hp" id="hpFill"></div></div><div class="meterlabel" style="margin-top:8px"><span>SOUL EXPERIENCE</span><span id="xpText">0 / 100</span></div><div class="meter"><div class="fill xp" id="xpFill" style="width:0%"></div></div></div><div class="orb blue">✧</div></div></div>
-<div id="overlay"><div class="panel"><div class="eyebrow">A GOTHIC ACTION RPG PROTOTYPE</div><div class="title">ASHEN VOW</div><div class="rule"></div><p class="desc">Unutulmuş bir katedralin küllerinde uyandın. Tırpanını kuşan, lanetlileri biç ve ruhunu geri kazan.</p><button class="btn" id="start">KARANLIĞA GİR</button><div class="small">WASD ile hareket · Fare ile yönel ve saldır · SPACE ile kaçın<br>Bu prototip masaüstü tarayıcılar için tasarlanmıştır.</div></div></div>
+<div id="overlay"><div class="panel"><div class="eyebrow">A DARK FANTASY ONLINE WORLD</div><div class="title">ASHEN VOW</div><div class="rule"></div><p class="desc">Kül ve buzun hüküm sürdüğü unutulmuş bir diyara adım at. Katedralin lanetini kır, kayıp ruhları topla ve sessiz kefareti tamamla.</p><button class="btn" id="start">KARANLIĞA GİR</button><div class="small">WASD ile hareket · Fare ile yönel ve saldır · SPACE ile kaçın<br>FROSTBOUND CATHEDRAL · ASHEN FRONTIER</div></div></div>
 <div id="levelup"><div class="panel"><div class="eyebrow">A NEW SIN, A NEW GIFT</div><div class="title" style="font-size:32px">RUHUN GÜÇLENİYOR</div><p class="desc">Bir kutsama seç.</p><div class="choices" id="choices"></div></div></div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
 (()=>{
 const canvas=document.getElementById('game');
 let W=innerWidth,H=innerHeight,dpr=Math.min(devicePixelRatio||1,2);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
-renderer.setPixelRatio(dpr);renderer.setSize(W,H);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x8397ad);scene.fog=new THREE.FogExp2(0x8397ad,.008);
-const camera=new THREE.PerspectiveCamera(42,W/H,.1,900);camera.position.set(0,22,18);
-const hemi=new THREE.HemisphereLight(0xd8e5ff,0x272b38,1.65);scene.add(hemi);
-const moon=new THREE.DirectionalLight(0xc7d9f2,2.4);moon.position.set(-25,45,-20);moon.castShadow=true;moon.shadow.mapSize.set(2048,2048);moon.shadow.camera.left=-55;moon.shadow.camera.right=55;moon.shadow.camera.top=55;moon.shadow.camera.bottom=-55;scene.add(moon);
-const fireLight=new THREE.PointLight(0xff8b43,2.4,28);scene.add(fireLight);
-const groundMat=new THREE.MeshStandardMaterial({color:0x343b47,roughness:1});
+renderer.setPixelRatio(dpr);renderer.setSize(W,H);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.02;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x090d16);scene.fog=new THREE.FogExp2(0x101722,.012);
+const camera=new THREE.PerspectiveCamera(38,W/H,.1,900);camera.position.set(0,22,18);
+const hemi=new THREE.HemisphereLight(0xbacbe0,0x17151b,1.05);scene.add(hemi);
+const moon=new THREE.DirectionalLight(0xb5c8e0,2.0);moon.position.set(-25,45,-20);moon.castShadow=true;moon.shadow.mapSize.set(2048,2048);moon.shadow.camera.left=-55;moon.shadow.camera.right=55;moon.shadow.camera.top=55;moon.shadow.camera.bottom=-55;scene.add(moon);
+const fireLight=new THREE.PointLight(0x9fbce0,1.8,32);scene.add(fireLight);
+const groundMat=new THREE.MeshStandardMaterial({color:0x171b23,roughness:.96,metalness:.04});
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(1200,1200),groundMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.12;ground.receiveShadow=true;scene.add(ground);
-const grid=new THREE.GridHelper(1200,120,0x687487,0x536071);grid.position.y=-.105;grid.material.opacity=.08;grid.material.transparent=true;scene.add(grid);
+const grid=new THREE.GridHelper(1200,120,0x273344,0x1b2634);grid.position.y=-.105;grid.material.opacity=.025;grid.material.transparent=true;scene.add(grid);
 const worldProps=new THREE.Group();scene.add(worldProps);
 const rnd=(a,b)=>a+Math.random()*(b-a);
 const stoneMats=[0x343039,0x292830,0x403840,0x24242c].map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.9}));
@@ -93,7 +121,20 @@ function addRuins(){
  // Fire altars at the edge of the ruined sanctuary
  for(let i=0;i<10;i++){let a=i*Math.PI*2/10,x=Math.cos(a)*21,z=Math.sin(a)*21;const brazier=new THREE.Mesh(new THREE.CylinderGeometry(.38,.65,1.6,7),stoneMats[1]);brazier.position.set(x,.8,z);brazier.castShadow=true;worldProps.add(brazier);const flame=new THREE.Mesh(new THREE.ConeGeometry(.28,.9,7),new THREE.MeshBasicMaterial({color:0xff7135}));flame.position.set(x,2,z);worldProps.add(flame);const glow=new THREE.PointLight(0xff542a,1.7,10);glow.position.set(x,2.2,z);worldProps.add(glow)}
 }
-addRuins();
+function buildSanctuary(){
+ const stone=new THREE.MeshStandardMaterial({color:0x252a34,roughness:.92}),edge=new THREE.MeshStandardMaterial({color:0x414653,roughness:.84}),glass=new THREE.MeshStandardMaterial({color:0x7896b7,emissive:0x314c70,emissiveIntensity:1.05,roughness:.25});
+ const facade=new THREE.Group();facade.position.set(0,0,-58);worldProps.add(facade);
+ const nave=new THREE.Mesh(new THREE.BoxGeometry(30,20,8),stone);nave.position.set(0,10,-2);nave.castShadow=true;facade.add(nave);
+ const roof=new THREE.Mesh(new THREE.ConeGeometry(17,13,4),stone);roof.scale.set(1,1,.72);roof.rotation.y=Math.PI/4;roof.position.set(0,25,-2);roof.castShadow=true;facade.add(roof);
+ for(const x of [-12,-8,8,12]){const tower=new THREE.Mesh(new THREE.CylinderGeometry(2.1,2.7,27,8),edge);tower.position.set(x,13,-2);tower.castShadow=true;facade.add(tower);const cap=new THREE.Mesh(new THREE.ConeGeometry(2.8,7,8),stone);cap.position.set(x,30,-2);facade.add(cap)}
+ const rose=new THREE.Mesh(new THREE.TorusGeometry(4.1,.42,12,64),edge);rose.position.set(0,14,2.15);facade.add(rose);
+ const disc=new THREE.Mesh(new THREE.CircleGeometry(3.65,48),glass);disc.position.set(0,14,2.1);facade.add(disc);
+ for(let i=0;i<12;i++){let a=i*Math.PI/6;const rib=new THREE.Mesh(new THREE.BoxGeometry(.09,7.2,.12),edge);rib.position.set(Math.cos(a)*1.8,14+Math.sin(a)*1.8,2.24);rib.rotation.z=a;facade.add(rib)}
+ const door=new THREE.Mesh(new THREE.BoxGeometry(5,9,.5),new THREE.MeshStandardMaterial({color:0x080b12}));door.position.set(0,4.5,2.3);facade.add(door);
+ for(let i=0;i<7;i++){const step=new THREE.Mesh(new THREE.BoxGeometry(14-i*1.3,.48,2.4),edge);step.position.set(0,.25+i*.48,6+i*1.9);step.castShadow=true;facade.add(step)}
+ for(const x of [-5.8,5.8]){const pillar=new THREE.Mesh(new THREE.CylinderGeometry(.55,.8,12,8),edge);pillar.position.set(x,6,3);facade.add(pillar);const arch=new THREE.Mesh(new THREE.TorusGeometry(5.8,.28,8,48,Math.PI),edge);arch.position.set(x,10,3);arch.rotation.z=Math.PI;facade.add(arch)}
+}
+buildSanctuary();addRuins();
 const candleGroup=new THREE.Group();scene.add(candleGroup);
 for(let i=0;i<18;i++){let a=i*Math.PI*2/18,x=Math.cos(a)*17,z=Math.sin(a)*17;const stand=new THREE.Mesh(new THREE.CylinderGeometry(.18,.28,1.4,7),stoneMats[2]);stand.position.set(x,.7,z);stand.castShadow=true;candleGroup.add(stand);const flame=new THREE.Mesh(new THREE.SphereGeometry(.16,8,8),new THREE.MeshBasicMaterial({color:0xffa34f}));flame.position.set(x,1.55,z);candleGroup.add(flame)}
 function resize(){W=innerWidth;H=innerHeight;renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.setSize(W,H);camera.aspect=W/H;camera.updateProjectionMatrix()}
@@ -117,7 +158,7 @@ function dropLoot(x,y,boss=false){let pool=boss?[['BISHOP’S RELIC','damage',18
 function renderLoot(){ui('lootlist').innerHTML=inventory.length?inventory.slice(-5).reverse().map(i=>'<div class="lootline"><span>'+i.name+'</span><em>'+i.rarity+'</em></div>').join(''):'Henüz ganimet yok.'}
 function collectLoot(){loot.forEach(item=>{item.life-=.016;if(dist(item,player)<1.15){inventory.push({name:item.name,stat:item.stat,value:item.value,rarity:item.rarity});try{localStorage.setItem('ashenVowInventory',JSON.stringify(inventory))}catch(e){}if(item.stat==='damage')player.damage+=item.value;if(item.stat==='health'){player.maxHp+=item.value;player.hp=Math.min(player.maxHp,player.hp+item.value)}if(item.stat==='speed')player.speed+=item.value*.04;ui('lootnotice').textContent=item.name+'  ·  '+item.rarity;ui('lootnotice').style.opacity=1;clearTimeout(collectLoot.t);collectLoot.t=setTimeout(()=>ui('lootnotice').style.opacity=0,1500);particle(item.x,item.y,'#d4b77d',12,100)}});loot=loot.filter(i=>i.life>0&&dist(i,player)>=1.15);renderLoot()}
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),groundPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0),aimPoint=new THREE.Vector3();function aimWorld(){pointer.set(mouse.x/W*2-1,-(mouse.y/H)*2+1);raycaster.setFromCamera(pointer,camera);raycaster.ray.intersectPlane(groundPlane,aimPoint);return aimPoint}function aimAngle(){const p=aimWorld();return Math.atan2(p.x-player.x,p.z-player.y)}
-function attackNow(){if(attack>0)return;attack=player.atkRate;attackAnimTime=attackAnimDuration;combo=comboTimer>0?(combo%3)+1:1;comboTimer=1.05;let a=aimAngle(),hit=0;const strikeDamage=player.damage*(combo===3?1.55:combo===2?1.12:1);enemies.forEach(e=>{let dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),ang=Math.atan2(dy,dx),diff=Math.atan2(Math.sin(ang-a),Math.cos(ang-a));if(d<player.range+e.r&&Math.abs(diff)<.72){e.hp-=strikeDamage;e.hit=.22;hit++;particle(e.x,e.y,'#b7d2df',10,145);if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none';say('BOSS YENİLDİ  ·  KUTSAL EMANET DÜŞTÜ')}else if(Math.random()<.22)dropLoot(e.x,e.y,false);particle(e.x,e.y,'#a88b61',16,170);decals.push({x:e.x,y:e.y,r:rand(12,25),a:rand(.2,.5)});}}});enemies=enemies.filter(e=>e.hp>0);if(hit===0)particle(player.x+Math.sin(a)*4,player.y+Math.cos(a)*4,'#a9c5d6',5,65)}
+function attackNow(){if(attack>0)return;attack=player.atkRate;attackAnimTime=attackAnimDuration;if(playerModelReady){const atk=Object.keys(playerActions).find(n=>/attack|slash/i.test(n));if(atk)choosePlayerAction(atk,.08);if(weaponPivot){weaponPivot.rotation.x=-.55;weaponPivot.rotation.z=-.85;}}combo=comboTimer>0?(combo%3)+1:1;comboTimer=1.05;let a=aimAngle(),hit=0;const strikeDamage=player.damage*(combo===3?1.55:combo===2?1.12:1);enemies.forEach(e=>{let dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),ang=Math.atan2(dy,dx),diff=Math.atan2(Math.sin(ang-a),Math.cos(ang-a));if(d<player.range+e.r&&Math.abs(diff)<.72){e.hp-=strikeDamage;e.hit=.22;hit++;particle(e.x,e.y,'#b7d2df',10,145);if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none';say('BOSS YENİLDİ  ·  KUTSAL EMANET DÜŞTÜ')}else if(Math.random()<.22)dropLoot(e.x,e.y,false);particle(e.x,e.y,'#a88b61',16,170);decals.push({x:e.x,y:e.y,r:rand(12,25),a:rand(.2,.5)});}}});enemies=enemies.filter(e=>e.hp>0);if(hit===0)particle(player.x+Math.sin(a)*4,player.y+Math.cos(a)*4,'#a9c5d6',5,65)}
 function dashNow(){if(dash>0)return;dash=.72;player.inv=.32;let dx=(keys.KeyD?1:0)-(keys.KeyA?1:0),dy=(keys.KeyS?1:0)-(keys.KeyW?1:0);if(!dx&&!dy){dx=mouse.x-W/2;dy=mouse.y-H/2}let l=Math.hypot(dx,dy)||1;player.x+=dx/l*5.5;player.y+=dy/l*6.5;particle(player.x,player.y,'#8da6bd',20,150)}
 function soulBurst(){if(burst>0)return;burst=5;let n=0;enemies.forEach(e=>{if(dist(e,player)<8){e.hp-=player.damage*2;n++;particle(e.x,e.y,'#a9c9df',14,180)}});enemies=enemies.filter(e=>{if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none'}else if(Math.random()<.22)dropLoot(e.x,e.y,false);return false}return true});particle(player.x,player.y,'#91b8d3',35,220);say('RUH PATLAMASI  ·  '+n+' HEDEF')}
 
@@ -131,7 +172,7 @@ function useSkill(key){if(!gameOn||skillCD[key]>0)return;const a=aimAngle();let 
  enemies=enemies.filter(e=>{if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none'}else if(Math.random()<.22)dropLoot(e.x,e.y,false);return false}return true});updateHud();updateSkillHud();updateMMO()}
 function levelUp(){level++;xp-=xpNeed;xpNeed=Math.floor(xpNeed*1.35);gameOn=false;let options=[['KAN YEMİNİ','Azami can +25',()=>{player.maxHp+=25;player.hp=Math.min(player.maxHp,player.hp+25)}],['KIRIK AY','Tırpan hasarı +12',()=>player.damage+=12],['KÜL ADIMI','Hareket hızı +25',()=>player.speed+=.65],['AÇ RUH','Ruh patlaması bekleme süresi azalır',()=>burst=Math.max(0,burst-2)],['SON NEFES','Saniyede 1.5 can yenile',()=>player.regen+=1.5],['KESKİN YAY','Saldırı hızı artar',()=>player.atkRate=Math.max(.2,player.atkRate-.06)]].sort(()=>Math.random()-.5).slice(0,3);ui('choices').innerHTML='';options.forEach(o=>{let b=document.createElement('button');b.className='choice';b.innerHTML='<b>'+o[0]+'</b><span>'+o[1]+'</span>';b.onclick=()=>{o[2]();ui('levelup').style.display='none';gameOn=true;say('SEVİYE '+level)};ui('choices').appendChild(b)});ui('levelup').style.display='flex'}
 const mapCanvas=ui('mmo-map'),mapCtx=mapCanvas.getContext('2d');function drawMiniMap(){if(!player)return;const c=mapCtx;c.clearRect(0,0,150,150);c.fillStyle='#0b111b';c.fillRect(0,0,150,150);c.strokeStyle='#39485c';for(let i=0;i<=150;i+=25){c.beginPath();c.moveTo(i,0);c.lineTo(i,150);c.stroke();c.beginPath();c.moveTo(0,i);c.lineTo(150,i);c.stroke()}enemies.forEach(e=>{let x=75+(e.x-player.x)*.7,y=75+(e.y-player.y)*.7;if(x>2&&x<148&&y>2&&y<148){c.fillStyle=e.boss?'#e4a65c':'#a84955';c.beginPath();c.arc(x,y,e.boss?4:2,0,Math.PI*2);c.fill()}});c.fillStyle='#d9eaff';c.beginPath();c.arc(75,75,4,0,Math.PI*2);c.fill();c.strokeStyle='#d9eaff';c.beginPath();c.moveTo(75,75);c.lineTo(75+Math.sin(aimAngle())*11,75+Math.cos(aimAngle())*11);c.stroke();c.strokeStyle='#9b8965';c.strokeRect(.5,.5,149,149)}function updateMMO(){if(!player)return;ui('questcount').textContent=Math.min(kills,12)+' / 12 düşman';ui('questfill').style.width=Math.min(100,kills/12*100)+'%';ui('questboss').textContent=inventory.some(i=>i.rarity==='Efsanevi')?'Durum: Mühür ele geçirildi':'Durum: Piskopos bekleniyor';drawMiniMap()}function updateHud(){ui('lv').textContent=level;ui('kills').textContent=kills;ui('wave').textContent=wave;ui('hpText').textContent=Math.ceil(player.hp)+' / '+player.maxHp;ui('hpFill').style.width=player.hp/player.maxHp*100+'%';ui('xpText').textContent=xp+' / '+xpNeed;ui('xpFill').style.width=xp/xpNeed*100+'%'}
-function update(dt){if(!gameOn)return;gameTime+=dt;attack=Math.max(0,attack-dt);attackAnimTime=Math.max(0,attackAnimTime-dt);dash=Math.max(0,dash-dt);burst=Math.max(0,burst-dt);comboTimer=Math.max(0,comboTimer-dt);for(const k of ['q','e','r','f'])skillCD[k]=Math.max(0,skillCD[k]-dt);player.inv=Math.max(0,player.inv-dt);player.hp=Math.min(player.maxHp,player.hp+player.regen*dt);
+function update(dt){if(!gameOn)return;gameTime+=dt;if(playerMixer)playerMixer.update(dt);if(playerModelReady){if(attack<=dt){const move=player.moveAmount>.12;const desired=move?Object.keys(playerActions).find(n=>/walk/i.test(n)):Object.keys(playerActions).find(n=>/idle_12|idle/i.test(n));if(desired)choosePlayerAction(desired,.24);}if(weaponPivot){weaponPivot.rotation.x+=(0-weaponPivot.rotation.x)*Math.min(1,dt*5);weaponPivot.rotation.z+=(0-weaponPivot.rotation.z)*Math.min(1,dt*5);}}attack=Math.max(0,attack-dt);attackAnimTime=Math.max(0,attackAnimTime-dt);dash=Math.max(0,dash-dt);burst=Math.max(0,burst-dt);comboTimer=Math.max(0,comboTimer-dt);for(const k of ['q','e','r','f'])skillCD[k]=Math.max(0,skillCD[k]-dt);player.inv=Math.max(0,player.inv-dt);player.hp=Math.min(player.maxHp,player.hp+player.regen*dt);
 let sx=(keys.KeyD?1:0)-(keys.KeyA?1:0),sy=(keys.KeyS?1:0)-(keys.KeyW?1:0);let moving=!!(sx||sy);player.moveAmount+=((moving?1:0)-player.moveAmount)*Math.min(1,dt*4.5);if(moving)player.walkPhase+=dt*3.2;let l=Math.hypot(sx,sy)||1;player.x+=sx/l*player.speed*dt;player.y+=sy/l*player.speed*dt;player.x=clamp(player.x,-210,210);player.y=clamp(player.y,-210,210);
 if(keys.Space){keys.Space=false;dashNow()}if(keys.ShiftLeft||keys.ShiftRight){keys.ShiftLeft=keys.ShiftRight=false;useSkill('f')}for(const k of ['q','e','r','f']){const code={q:'KeyQ',e:'KeyE',r:'KeyR',f:'KeyF'}[k];if(keys[code]){keys[code]=false;useSkill(k)}}if(mouse.down)attackNow();
 spawn-=dt;if(spawn<=0){spawnEnemy();spawn=Math.max(.42,1.35-wave*.055)}
@@ -200,7 +241,36 @@ function makeWarrior(isBoss=false,isPlayer=false){
  weapon.rotation.z=-.42;weapon.rotation.x=-.08;
  root.userData={armPivots,legPivots,weaponPivot,weapon,train,torso};return root;
 }
-const playerModel=makeWarrior(false,true);scene.add(playerModel);
+const playerModel=new THREE.Group();scene.add(playerModel);
+let playerMixer=null,playerActions={},activePlayerAction='',playerModelReady=false,weaponPivot=null;
+function addScythe(hand){
+ const grip=new THREE.Group();hand.add(grip);grip.position.set(.02,-.04,.04);grip.rotation.set(.15,0,-.18);weaponPivot=grip;
+ const shaftMat=new THREE.MeshStandardMaterial({color:0x28232a,metalness:.68,roughness:.36}),bladeMat=new THREE.MeshStandardMaterial({color:0xb7c9d8,metalness:.92,roughness:.18,emissive:0x29445d,emissiveIntensity:.7});
+ const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.045,.075,2.5,10),shaftMat);shaft.position.y=-.45;grip.add(shaft);
+ const collar=new THREE.Mesh(new THREE.TorusGeometry(.105,.025,8,18),new THREE.MeshStandardMaterial({color:0x927b59,metalness:.8,roughness:.28}));collar.position.y=.67;grip.add(collar);
+ const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(0,.68,0),new THREE.Vector3(.28,1.02,0),new THREE.Vector3(.76,1.22,0),new THREE.Vector3(1.35,1.12,0),new THREE.Vector3(1.78,.72,0),new THREE.Vector3(1.88,.25,0)]);
+ grip.add(new THREE.Mesh(new THREE.TubeGeometry(curve,48,.065,10,false),bladeMat));
+ grip.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(.05,.72,.015),new THREE.Vector3(.38,.98,.015),new THREE.Vector3(.82,1.08,.015),new THREE.Vector3(1.3,.99,.015),new THREE.Vector3(1.65,.68,.015)]),40,.018,6,false),new THREE.MeshBasicMaterial({color:0xd9efff})));
+ for(let i=0;i<3;i++){const chain=new THREE.Mesh(new THREE.TorusGeometry(.11+i*.045,.012,5,12),shaftMat);chain.position.set(-.08,-.9-i*.18,.04);chain.rotation.x=Math.PI/2;grip.add(chain)}
+ grip.scale.setScalar(.78);
+}
+function choosePlayerAction(name,fade=.22){const next=playerActions[name];if(!next||activePlayerAction===name)return;const prev=playerActions[activePlayerAction];next.reset().fadeIn(fade).play();if(prev)prev.fadeOut(fade);activePlayerAction=name}
+function loadHero(){
+ const status=ui('model-status'),loader=new GLTFLoader();
+ loader.load('https://vibeassets.io/download/k6bdm27lba',gltf=>{
+  const model=gltf.scene;model.scale.setScalar(2.02);model.rotation.y=Math.PI;
+  model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});
+  const box=new THREE.Box3().setFromObject(model),center=box.getCenter(new THREE.Vector3());model.position.x=-center.x;model.position.z=-center.z;model.position.y=-box.min.y;
+  playerModel.add(model);playerModelReady=true;playerMixer=new THREE.AnimationMixer(model);
+  gltf.animations.forEach(clip=>playerActions[clip.name]=playerMixer.clipAction(clip));
+  const idle=Object.keys(playerActions).find(n=>/idle_12|idle/i.test(n));if(idle)choosePlayerAction(idle,0);
+  let hand=null;model.traverse(o=>{if(o.isBone&&/right.?hand|hand.?r/i.test(o.name))hand=o});
+  if(!hand)model.traverse(o=>{if(o.isBone&&/right.?arm/i.test(o.name))hand=o});
+  if(hand)addScythe(hand);
+  status.textContent='VESPER · 3D KARAKTER HAZIR';setTimeout(()=>status.style.opacity='0',2600);
+ },undefined,err=>{console.error('Hero GLB load failed',err);status.textContent='3D MODEL AĞDAN YÜKLENEMEDİ · YEDEK MODEL AKTİF';});
+}
+loadHero();
 function enemyModel(e){let m=makeWarrior(!!e.boss,false);m.scale.setScalar(e.boss?1.7:.8);if(e.kind==='wraith')m.traverse(o=>{if(o.isMesh&&o.material)o.material=o.material.clone(),o.material.transparent=true,o.material.opacity=.68});scene.add(m);return m}
 let frameDelta=.016;let attackAnimTime=0,attackAnimDuration=.64;function draw(dt){frameDelta=dt;
  if(!player)return;
@@ -208,24 +278,8 @@ let frameDelta=.016;let attackAnimTime=0,attackAnimDuration=.64;function draw(dt
  const desiredCamera=new THREE.Vector3(player.x,10.8,player.y+13.5);
  camera.position.lerp(desiredCamera,1-Math.exp(-5.5*frameDelta));camera.lookAt(target);
  fireLight.position.set(player.x+7,3,player.y-6);
- playerModel.position.set(player.x,0,player.y);playerModel.rotation.y=aimAngle();
- const rig=playerModel.userData;
- const stride=Math.sin(player.walkPhase)*player.moveAmount;
- rig.legPivots[0].rotation.x=stride*.42;rig.legPivots[1].rotation.x=-stride*.42;
- rig.armPivots[0].rotation.x=-stride*.16;rig.armPivots[1].rotation.x=stride*.16;
- rig.train.rotation.z=Math.sin(gameTime*1.8)*.035+stride*.045;
- rig.train.rotation.x=-.18+Math.sin(gameTime*2.2)*.035;
- playerModel.position.y=Math.abs(Math.sin(player.walkPhase*2))*.035*player.moveAmount;
- const attackT=attackAnimTime>0?1-attackAnimTime/attackAnimDuration:0;
- const wind=Math.sin(Math.min(1,attackT/.28)*Math.PI/2);
- const swing=attackT>.28?Math.sin(clamp((attackT-.28)/.52,0,1)*Math.PI):0;
- const recover=attackT>.72?clamp((1-attackT)/.28,0,1):1;
- rig.armPivots[0].rotation.x+=attackAnimTime>0?-.95*wind+1.5*swing:0;
- rig.armPivots[0].rotation.z=attackAnimTime>0?-.38*wind+.82*swing:0;
- rig.armPivots[1].rotation.x=attackAnimTime>0?.42*wind-.65*swing:stride*.16;
- rig.weaponPivot.rotation.x=attackAnimTime>0?-.55*wind+1.05*swing:0;
- rig.weaponPivot.rotation.z=attackAnimTime>0?-.95*wind+2.25*swing*recover:0;
- rig.weapon.rotation.z=-.42+(attackAnimTime>0?-.35*wind+.48*swing:0);
+ playerModel.position.set(player.x,0,player.y);playerModel.rotation.y=aimAngle()+Math.PI;
+ playerModel.position.y=Math.abs(Math.sin(player.walkPhase*2))*.025*player.moveAmount;
  playerModel.visible=player.inv<=0||Math.floor(gameTime*18)%2===0;
  const active=new Set();
  enemies.forEach(e=>{let id=e;active.add(id);let model=actorMeshes.get(id);if(!model){model=enemyModel(e);actorMeshes.set(id,model)}model.position.set(e.x,0,e.y);model.lookAt(player.x,0,player.y);model.position.y=.06+Math.sin(gameTime*3+e.phase)*.06;if(e.hit>0)model.traverse(o=>{if(o.isMesh&&o.material&&o.material.emissive)o.material.emissive.setHex(0x552233)})});
