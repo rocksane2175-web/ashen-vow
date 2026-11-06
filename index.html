@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASHEN VOW — Gothic Action RPG</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:wght@400;600&display=swap');
+:root{--gold:#b9a078;--red:#8d2630;--ink:#09090c;--muted:#aaa09a}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#08090d;color:#e8dfd3;font-family:'Crimson Text',serif}
+#game{display:block;width:100vw;height:100vh;background:#0a0b10;cursor:crosshair}
+.vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 40%,#030407c9 100%);z-index:2}
+header{position:fixed;z-index:4;top:18px;left:22px;display:flex;align-items:center;gap:14px;pointer-events:none}
+.sig{width:42px;height:42px;border:1px solid #78664e;display:grid;place-items:center;color:#c8b28b;font-size:25px;transform:rotate(45deg);background:#0a0b10b8}.sig span{transform:rotate(-45deg)}
+.brand{font:700 18px Cinzel,serif;letter-spacing:4px;color:#e5d7c0;text-shadow:0 2px 8px #000}.sub{font:11px Cinzel;letter-spacing:2px;color:#958879;margin-top:4px}
+#hud{position:fixed;z-index:4;left:50%;bottom:20px;transform:translateX(-50%);width:min(650px,90vw);pointer-events:none}
+.bars{display:flex;gap:9px;align-items:center}.orb{width:65px;height:65px;border:2px solid #8e7860;border-radius:50%;background:radial-gradient(circle at 50% 60%,#3c1018,#10080b 70%);box-shadow:0 0 18px #8c172b55,inset 0 0 12px #000;display:grid;place-items:center;color:#d9b6a6;font:12px Cinzel}
+.orb.blue{background:radial-gradient(circle at 50% 60%,#172d48,#080d16 70%);box-shadow:0 0 18px #244b8b55,inset 0 0 12px #000}
+.meterbox{flex:1}.meterlabel{display:flex;justify-content:space-between;font:11px Cinzel;letter-spacing:1.4px;color:#c7b89f;margin:0 4px 4px}.meter{height:10px;background:#171417;border:1px solid #695a4b;box-shadow:0 2px 8px #000;overflow:hidden}.fill{height:100%;width:100%;transition:width .15s}.hp{background:linear-gradient(90deg,#5e101c,#c13b43)}.xp{background:linear-gradient(90deg,#80602c,#d7b86d)}
+#stats{position:fixed;right:22px;top:20px;z-index:4;text-align:right;font:11px Cinzel;letter-spacing:1.5px;color:#b8aa97;text-shadow:0 2px 5px #000;line-height:2}
+#help{position:fixed;left:22px;bottom:22px;z-index:4;color:#a69a8d;font-size:14px;line-height:1.55;text-shadow:0 2px 5px #000}
+kbd{font:11px Cinzel;border:1px solid #77634b;padding:2px 5px;color:#e0cba6;background:#151318}
+#message{position:fixed;top:24%;left:50%;transform:translateX(-50%);z-index:5;text-align:center;font:600 18px Cinzel;letter-spacing:3px;color:#d6c4a5;text-shadow:0 2px 12px #000;opacity:0;transition:opacity .4s;pointer-events:none}
+#overlay{position:fixed;inset:0;z-index:10;background:radial-gradient(ellipse,#17151aee,#050609f5);display:flex;align-items:center;justify-content:center;text-align:center}
+.panel{width:min(560px,90vw);padding:40px 32px;border:1px solid #78654d;background:linear-gradient(145deg,#17151aee,#09090dee);box-shadow:0 0 70px #000}
+.eyebrow{font:11px Cinzel;letter-spacing:5px;color:#a58d6a}.title{font:900 clamp(36px,8vw,64px) Cinzel;letter-spacing:5px;margin:12px 0 0;color:#e9dfd0;text-shadow:0 0 24px #9e7a4b55}.rule{width:100px;height:1px;background:#8b7455;margin:20px auto}
+.desc{font-size:18px;line-height:1.55;color:#c0b5aa;max-width:440px;margin:0 auto 22px}.btn{font:600 13px Cinzel;letter-spacing:3px;color:#eee1ca;background:linear-gradient(#5b2027,#281116);border:1px solid #9b765b;padding:14px 30px;cursor:pointer}.btn:hover{filter:brightness(1.3);box-shadow:0 0 20px #8b263555}
+.small{font-size:13px;color:#8f867e;margin-top:20px;line-height:1.7}
+#levelup{display:none;position:fixed;inset:0;z-index:8;background:#050609d9;align-items:center;justify-content:center}
+.choices{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}.choice{width:145px;min-height:125px;padding:14px;border:1px solid #76634b;background:#151319;color:#e6d9c7;cursor:pointer}.choice:hover{background:#29202a;border-color:#c5a879}.choice b{display:block;font:13px Cinzel;letter-spacing:1px;color:#d7bd8f;margin-bottom:8px}.choice span{font-size:15px;color:#b8ada2}
+@media(max-width:600px){#help{font-size:12px;left:10px;bottom:8px}.orb{width:48px;height:48px}header{left:10px;top:10px}.brand{font-size:14px}#stats{right:10px;top:10px;font-size:9px}}
+
+#lootpanel{position:fixed;right:22px;bottom:22px;z-index:4;width:190px;padding:10px 12px;border:1px solid #665744;background:#0a0a0dcc;box-shadow:0 4px 20px #0008}
+#lootpanel h3{font:11px Cinzel;letter-spacing:2px;color:#c9b28b;margin:0 0 7px}
+#lootlist{font-size:13px;color:#bdb2a6;line-height:1.45;max-height:110px;overflow:hidden}
+.lootline{display:flex;justify-content:space-between;gap:6px;border-top:1px solid #302a2b;padding:4px 0}
+.lootline em{font-style:normal;color:#c9a86f}
+#bossbar{display:none;position:fixed;z-index:5;top:76px;left:50%;transform:translateX(-50%);width:min(480px,75vw);text-align:center}
+#bossname{font:12px Cinzel;letter-spacing:3px;color:#c7a77d;margin-bottom:5px;text-shadow:0 2px 8px #000}
+#bosshp{height:9px;background:#160d10;border:1px solid #80634d}
+#bosshpfill{height:100%;width:100%;background:linear-gradient(90deg,#4c101a,#b52b38)}
+#lootnotice{position:fixed;z-index:6;top:34%;left:50%;transform:translateX(-50%);font:13px Cinzel;letter-spacing:2px;color:#d7bd8f;text-shadow:0 2px 12px #000;opacity:0;transition:opacity .4s;pointer-events:none}
+@media(max-width:650px){#lootpanel{right:8px;bottom:8px;width:145px}#help{max-width:52%}}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas><div class="vignette"></div>
+<header><div class="sig"><span>✠</span></div><div><div class="brand">ASHEN VOW</div><div class="sub">THE SILENT PENANCE</div></div></header>
+<div id="stats">LEVEL <span id="lv">1</span><br>SOULS <span id="kills">0</span><br>WAVE <span id="wave">1</span></div>
+<div id="help"><kbd>W A S D</kbd> Yürü &nbsp; <kbd>FARE</kbd> Tırpan saldırısı<br><kbd>SPACE</kbd> Gölge atılımı &nbsp; <kbd>SHIFT</kbd> Ruh patlaması<br>Parlayan ganimetlerin üzerinden geçerek otomatik topla.</div>
+<div id="message"></div><div id="lootnotice"></div><div id="bossbar"><div id="bossname">THE HOLLOW BISHOP</div><div id="bosshp"><div id="bosshpfill"></div></div></div><div id="lootpanel"><h3>RELIQUAR / GANİMET</h3><div id="lootlist">Henüz ganimet yok.</div></div>
+<div id="hud"><div class="bars"><div class="orb" id="hpOrb">♥</div><div class="meterbox"><div class="meterlabel"><span>VITALITY</span><span id="hpText">100 / 100</span></div><div class="meter"><div class="fill hp" id="hpFill"></div></div><div class="meterlabel" style="margin-top:8px"><span>SOUL EXPERIENCE</span><span id="xpText">0 / 100</span></div><div class="meter"><div class="fill xp" id="xpFill" style="width:0%"></div></div></div><div class="orb blue">✧</div></div></div>
+<div id="overlay"><div class="panel"><div class="eyebrow">A GOTHIC ACTION RPG PROTOTYPE</div><div class="title">ASHEN VOW</div><div class="rule"></div><p class="desc">Unutulmuş bir katedralin küllerinde uyandın. Tırpanını kuşan, lanetlileri biç ve ruhunu geri kazan.</p><button class="btn" id="start">KARANLIĞA GİR</button><div class="small">WASD ile hareket · Fare ile yönel ve saldır · SPACE ile kaçın<br>Bu prototip masaüstü tarayıcılar için tasarlanmıştır.</div></div></div>
+<div id="levelup"><div class="panel"><div class="eyebrow">A NEW SIN, A NEW GIFT</div><div class="title" style="font-size:32px">RUHUN GÜÇLENİYOR</div><p class="desc">Bir kutsama seç.</p><div class="choices" id="choices"></div></div></div>
+<script>
+(()=>{
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+let W=innerWidth,H=innerHeight,dpr=Math.min(devicePixelRatio||1,2);
+function resize(){W=innerWidth;H=innerHeight;canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+addEventListener('resize',resize);resize();
+const keys={},mouse={x:W/2+100,y:H/2,down:false};
+addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ShiftLeft','ShiftRight'].includes(e.code))e.preventDefault()});
+addEventListener('keyup',e=>keys[e.code]=false);
+canvas.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+canvas.addEventListener('mousedown',()=>mouse.down=true);addEventListener('mouseup',()=>mouse.down=false);
+const rand=(a,b)=>a+Math.random()*(b-a),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+let player,enemies,particles,decals,loot,inventory,gameOn=false,last=0,spawn=0,attack=0,dash=0,burst=0,shake=0,kills=0,wave=1,level=1,xp=0,xpNeed=100,gameTime=0,bossSpawnedWave=0;
+const ui=id=>document.getElementById(id);
+function reset(){player={x:W/2,y:H/2,r:15,hp:100,maxHp:100,speed:205,damage:34,range:105,atkRate:.42,regen:0,inv:0};enemies=[];particles=[];decals=[];loot=[];inventory=[];try{inventory=JSON.parse(localStorage.getItem('ashenVowInventory')||'[]')}catch(e){inventory=[]}
+kills=0;wave=1;level=1;xp=0;xpNeed=100;spawn=0;gameTime=0;bossSpawnedWave=0;
+inventory.forEach(i=>{if(i.stat==='damage')player.damage+=i.value;if(i.stat==='health'){player.maxHp+=i.value;player.hp+=i.value}if(i.stat==='speed')player.speed+=i.value});
+updateHud();renderLoot();ui('bossbar').style.display='none'}
+function say(s){ui('message').textContent=s;ui('message').style.opacity=1;clearTimeout(say.t);say.t=setTimeout(()=>ui('message').style.opacity=0,1700)}
+function particle(x,y,color,n=8,power=100){for(let i=0;i<n;i++){let a=rand(0,Math.PI*2),v=rand(power*.25,power);particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rand(.25,.65),max:.65,color,r:rand(1,3)})}}
+function spawnEnemy(boss=false){let a=rand(0,Math.PI*2),rad=Math.max(W,H)*.62;let hp=boss?950+wave*100:(wave>1?48+(wave-1)*9:48);enemies.push({x:player.x+Math.cos(a)*rad,y:player.y+Math.sin(a)*rad,r:boss?35:rand(13,18),hp,max:hp,speed:boss?34:rand(42,67)+wave*2,damage:boss?24:9+wave,hit:0,kind:boss?'bishop':Math.random()<.18?'wraith':'ghoul',phase:rand(0,6),boss})}
+function dropLoot(x,y,boss=false){let pool=boss?[['BISHOP’S RELIC','damage',18,'Efsanevi'],['ASHEN CROWN','health',35,'Efsanevi'],['SOULBOUND BOOTS','speed',35,'Efsanevi']]:[['Paslı Tılsım','damage',5,'Sıradan'],['Kül Parçası','health',8,'Sıradan'],['Sessiz Adım','speed',10,'Nadir']];let item=pool[Math.floor(Math.random()*pool.length)];loot.push({x,y,name:item[0],stat:item[1],value:item[2],rarity:item[3],life:22});particle(x,y,boss?'#e2bd78':'#b2a0ce',14,90)}
+function renderLoot(){ui('lootlist').innerHTML=inventory.length?inventory.slice(-5).reverse().map(i=>'<div class="lootline"><span>'+i.name+'</span><em>'+i.rarity+'</em></div>').join(''):'Henüz ganimet yok.'}
+function collectLoot(){loot.forEach(item=>{item.life-=.016;if(dist(item,player)<34){inventory.push({name:item.name,stat:item.stat,value:item.value,rarity:item.rarity});try{localStorage.setItem('ashenVowInventory',JSON.stringify(inventory))}catch(e){}if(item.stat==='damage')player.damage+=item.value;if(item.stat==='health'){player.maxHp+=item.value;player.hp=Math.min(player.maxHp,player.hp+item.value)}if(item.stat==='speed')player.speed+=item.value;ui('lootnotice').textContent=item.name+'  ·  '+item.rarity;ui('lootnotice').style.opacity=1;clearTimeout(collectLoot.t);collectLoot.t=setTimeout(()=>ui('lootnotice').style.opacity=0,1500);particle(item.x,item.y,'#d4b77d',12,100)}});loot=loot.filter(i=>i.life>0&&dist(i,player)>=34);renderLoot()}
+function aimAngle(){let sx=mouse.x-W/2,sy=(mouse.y-H/2)/.58;let wx=(sx+sy)*.7071,wy=(sy-sx)*.7071;return Math.atan2(wy,wx)}\nfunction attackNow(){if(attack>0)return;attack=player.atkRate;let a=aimAngle();let hit=0;enemies.forEach(e=>{let dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),ang=Math.atan2(dy,dx),diff=Math.atan2(Math.sin(ang-a),Math.cos(ang-a));if(d<player.range+e.r&&Math.abs(diff)<.95){e.hp-=player.damage;e.hit=.18;hit++;particle(e.x,e.y,'#b7d2df',8,130);if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none';say('BOSS YENİLDİ  ·  KUTSAL EMANET DÜŞTÜ')}else if(Math.random()<.22)dropLoot(e.x,e.y,false);particle(e.x,e.y,'#a88b61',16,170);decals.push({x:e.x,y:e.y,r:rand(12,25),a:rand(.2,.5)});}}});enemies=enemies.filter(e=>e.hp>0);if(hit===0)particle(player.x+Math.cos(a)*60,player.y+Math.sin(a)*60,'#a9c5d6',5,65)}
+function dashNow(){if(dash>0)return;dash=.72;player.inv=.32;let dx=(keys.KeyD?1:0)-(keys.KeyA?1:0),dy=(keys.KeyS?1:0)-(keys.KeyW?1:0);if(!dx&&!dy){dx=mouse.x-W/2;dy=mouse.y-H/2}let l=Math.hypot(dx,dy)||1;player.x+=dx/l*120;player.y+=dy/l*120;particle(player.x,player.y,'#8da6bd',20,150)}
+function soulBurst(){if(burst>0)return;burst=5;let n=0;enemies.forEach(e=>{if(dist(e,player)<175){e.hp-=player.damage*2;n++;particle(e.x,e.y,'#a9c9df',14,180)}});enemies=enemies.filter(e=>{if(e.hp<=0){kills+=e.boss?5:1;xp+=e.boss?180:25;if(e.boss){dropLoot(e.x,e.y,true);ui('bossbar').style.display='none'}else if(Math.random()<.22)dropLoot(e.x,e.y,false);return false}return true});particle(player.x,player.y,'#91b8d3',35,220);say('RUH PATLAMASI  ·  '+n+' HEDEF')}
+function levelUp(){level++;xp-=xpNeed;xpNeed=Math.floor(xpNeed*1.35);gameOn=false;let options=[['KAN YEMİNİ','Azami can +25',()=>{player.maxHp+=25;player.hp=Math.min(player.maxHp,player.hp+25)}],['KIRIK AY','Tırpan hasarı +12',()=>player.damage+=12],['KÜL ADIMI','Hareket hızı +25',()=>player.speed+=25],['AÇ RUH','Ruh patlaması bekleme süresi azalır',()=>burst=Math.max(0,burst-2)],['SON NEFES','Saniyede 1.5 can yenile',()=>player.regen+=1.5],['KESKİN YAY','Saldırı hızı artar',()=>player.atkRate=Math.max(.2,player.atkRate-.06)]].sort(()=>Math.random()-.5).slice(0,3);ui('choices').innerHTML='';options.forEach(o=>{let b=document.createElement('button');b.className='choice';b.innerHTML='<b>'+o[0]+'</b><span>'+o[1]+'</span>';b.onclick=()=>{o[2]();ui('levelup').style.display='none';gameOn=true;say('SEVİYE '+level)};ui('choices').appendChild(b)});ui('levelup').style.display='flex'}
+function updateHud(){ui('lv').textContent=level;ui('kills').textContent=kills;ui('wave').textContent=wave;ui('hpText').textContent=Math.ceil(player.hp)+' / '+player.maxHp;ui('hpFill').style.width=player.hp/player.maxHp*100+'%';ui('xpText').textContent=xp+' / '+xpNeed;ui('xpFill').style.width=xp/xpNeed*100+'%'}
+function update(dt){if(!gameOn)return;gameTime+=dt;attack=Math.max(0,attack-dt);dash=Math.max(0,dash-dt);burst=Math.max(0,burst-dt);player.inv=Math.max(0,player.inv-dt);player.hp=Math.min(player.maxHp,player.hp+player.regen*dt);
+let sx=(keys.KeyD?1:0)-(keys.KeyA?1:0),sy=(keys.KeyS?1:0)-(keys.KeyW?1:0);let dx=(sx-sy)*.7071,dy=(sx+sy)*.7071,l=Math.hypot(dx,dy)||1;player.x+=dx/l*player.speed*dt;player.y+=dy/l*player.speed*dt;
+if(keys.Space){keys.Space=false;dashNow()}if(keys.ShiftLeft||keys.ShiftRight){keys.ShiftLeft=keys.ShiftRight=false;soulBurst()}if(mouse.down)attackNow();
+spawn-=dt;if(spawn<=0){spawnEnemy();spawn=Math.max(.42,1.35-wave*.055)}
+if(wave%5===0&&bossSpawnedWave!==wave){bossSpawnedWave=wave;spawnEnemy(true);ui('bossbar').style.display='block';say('KATEDRALİN PİSKOPOSU UYANDI')}
+if(kills>=wave*12){wave++;say('DALGA '+wave+'  ·  LANET DERİNLEŞİYOR')}
+collectLoot();
+let bossNow=enemies.find(e=>e.boss);if(bossNow){ui('bossbar').style.display='block';ui('bosshpfill').style.width=(bossNow.hp/bossNow.max*100)+'%'}else ui('bossbar').style.display='none';enemies.forEach(e=>{e.hit=Math.max(0,e.hit-dt);let dx=player.x-e.x,dy=player.y-e.y,l=Math.hypot(dx,dy)||1;e.x+=dx/l*e.speed*dt;e.y+=dy/l*e.speed*dt;if(l<player.r+e.r+2&&player.inv<=0){player.hp-=e.damage*dt;shake=3;if(player.hp<=0){player.hp=0;gameOn=false;ui('overlay').style.display='flex';ui('overlay').querySelector('.eyebrow').textContent='YOUR PENANCE IS NOT OVER';ui('overlay').querySelector('.title').textContent='YOU HAVE FALLEN';ui('overlay').querySelector('.desc').textContent='Lanetliler seni yuttu. '+kills+' ruh topladın, '+level+'. seviyeye ulaştın.';ui('start').textContent='YENİDEN DENE'}}});
+particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.96;p.vy*=.96;p.life-=dt});particles=particles.filter(p=>p.life>0);shake=Math.max(0,shake-dt*12);if(xp>=xpNeed)levelUp();updateHud()}
+function draw(){ctx.clearRect(0,0,W,H);let ox=W/2-player.x,oy=H/2-player.y;ctx.save();ctx.translate(W/2,H/2);ctx.rotate(Math.PI/4);ctx.scale(1,.58);ctx.translate(-player.x,-player.y);
+let tile=112;let sx=Math.floor((player.x-W)/tile)*tile,ex=player.x+W,sy=Math.floor((player.y-H)/tile)*tile,ey=player.y+H;
+ctx.fillStyle='#0d0e13';ctx.fillRect(sx,sy,ex-sx,ey-sy);
+for(let x=sx;x<ex;x+=tile)for(let y=sy;y<ey;y+=tile){ctx.fillStyle=((x/tile+y/tile)%2===0)?'#111219':'#0e1016';ctx.fillRect(x,y,tile-1,tile-1);ctx.strokeStyle='#24232a';ctx.globalAlpha=.45;ctx.strokeRect(x+5,y+5,tile-11,tile-11);ctx.globalAlpha=1;if(((Math.floor(x/tile)+Math.floor(y/tile))%5)===0){ctx.strokeStyle='#28252b';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+tile*.5,y+tile*.18);ctx.lineTo(x+tile*.5,y+tile*.82);ctx.moveTo(x+tile*.18,y+tile*.5);ctx.lineTo(x+tile*.82,y+tile*.5);ctx.stroke()}
+if(((Math.floor(x/tile)*7+Math.floor(y/tile)*3)%11)===0){ctx.fillStyle='#211f26';ctx.fillRect(x+tile*.12,y+tile*.12,8,8);ctx.fillStyle='#08090d';ctx.fillRect(x+tile*.12+2,y+tile*.12+2,4,4)}}
+decals.forEach(d=>{ctx.fillStyle=`rgba(75,12,24,${d.a})`;ctx.beginPath();ctx.ellipse(d.x,d.y,d.r,d.r*.55,rand(0,1),0,Math.PI*2);ctx.fill()});
+ // distant cathedral silhouettes
+for(let i=-3;i<4;i++){let x=player.x+i*330+90,yy=player.y-420;ctx.fillStyle='#08090e';ctx.fillRect(x,yy+45,30,250);ctx.fillRect(x-9,yy+35,48,15);ctx.beginPath();ctx.moveTo(x-16,yy+48);ctx.lineTo(x+15,yy-28);ctx.lineTo(x+46,yy+48);ctx.fill();ctx.fillStyle='#171820';ctx.fillRect(x+9,yy+95,3,100);ctx.fillStyle='#5c4b40';ctx.fillRect(x-3,yy+43,3,220)}
+enemies.forEach(e=>{ctx.save();ctx.translate(e.x,e.y);ctx.shadowBlur=18;ctx.shadowColor=e.kind==='wraith'?'#6687a9':'#721b27';ctx.fillStyle=e.hit>0?'#d5dce0':e.boss?'#5b3030':e.kind==='wraith'?'#536174':'#34252a';ctx.beginPath();ctx.ellipse(0,2,e.r*.72,e.r*1.15,0,0,Math.PI*2);ctx.fill();if(e.boss){ctx.strokeStyle='#b38b58';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-e.r,-e.r*.6);ctx.lineTo(-e.r*1.2,-e.r*1.5);ctx.lineTo(-e.r*.35,-e.r*1.05);ctx.moveTo(e.r,-e.r*.6);ctx.lineTo(e.r*1.2,-e.r*1.5);ctx.lineTo(e.r*.35,-e.r*1.05);ctx.stroke();}ctx.fillStyle='#0b0b10';ctx.beginPath();ctx.arc(0,-e.r*.55,e.r*.52,0,Math.PI*2);ctx.fill();ctx.fillStyle=e.boss?'#f1b75d':'#bd4651';ctx.fillRect(-5,-e.r*.65,3,2);ctx.fillRect(3,-e.r*.65,3,2);ctx.shadowBlur=0;if(e.hp<e.max){ctx.fillStyle='#1a1115';ctx.fillRect(-e.r,-e.r-10,e.r*2,3);ctx.fillStyle=e.boss?'#d4a45d':'#9d3039';ctx.fillRect(-e.r,-e.r-10,e.r*2*e.hp/e.max,3)}ctx.restore()});
+ // player and animated scythe
+let aim=Math.atan2(mouse.y-H/2,mouse.x-W/2);ctx.save();ctx.translate(player.x,player.y);ctx.rotate(aim);ctx.globalAlpha=player.inv>0?.55:1;
+let walkBob=Math.sin(gameTime*10)*(Math.abs((keys.KeyW||keys.KeyA||keys.KeyS||keys.KeyD)?1:0)) * 2 + Math.sin(gameTime*2.2)*1.4;
+ctx.fillStyle='#050609';ctx.beginPath();ctx.ellipse(0,7+walkBob,18,23,0,0,Math.PI*2);ctx.fill();
+ctx.fillStyle='#29242b';ctx.beginPath();ctx.moveTo(-13,-2+walkBob);ctx.lineTo(-4,-30+walkBob);ctx.lineTo(5,-34+walkBob);ctx.lineTo(16,-2+walkBob);ctx.lineTo(24,27+walkBob);ctx.quadraticCurveTo(0,20+walkBob,-22,29+walkBob);ctx.closePath();ctx.fill();
+ctx.strokeStyle='#51424a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-10,2+walkBob);ctx.lineTo(-19,25+walkBob+Math.sin(gameTime*8)*2);ctx.moveTo(10,1+walkBob);ctx.lineTo(18,26+walkBob-Math.sin(gameTime*8)*2);ctx.stroke();
+ctx.fillStyle='#c4b4a6';ctx.beginPath();ctx.arc(0,-18,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17141a';ctx.beginPath();ctx.moveTo(-9,-20);ctx.lineTo(0,-36);ctx.lineTo(10,-20);ctx.lineTo(6,-14);ctx.lineTo(-8,-14);ctx.fill();
+ctx.strokeStyle='#9d896e';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(7,-5);ctx.lineTo(38,12);ctx.stroke();ctx.strokeStyle='#a9b9c5';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(38,12);ctx.quadraticCurveTo(70,7,76,-22);ctx.quadraticCurveTo(51,-1,38,12);ctx.stroke();
+ctx.restore();
+if(attack>0){ctx.save();ctx.translate(player.x,player.y);ctx.rotate(aim);ctx.strokeStyle='rgba(173,198,212,'+(attack/.42*.6)+')';ctx.lineWidth=4;ctx.shadowBlur=18;ctx.shadowColor='#a4c3d5';ctx.beginPath();ctx.arc(0,0,player.range*.72,-.8,.8);ctx.stroke();ctx.restore()}
+particles.forEach(p=>{ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1});
+ctx.restore();
+ // screen-space subtle grain and dark edges
+let g=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.18,W/2,H/2,Math.max(W,H)*.7);g.addColorStop(0,'transparent');g.addColorStop(1,'rgba(0,0,0,.55)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+}
+function loop(t){let dt=Math.min((t-last)/1000||0,.033);last=t;update(dt);draw();requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+ui('start').onclick=()=>{reset();ui('overlay').style.display='none';gameOn=true;say('KATEDRALİN KÜLLERİNE HOŞ GELDİN')};
+})();
+</script>
+</body></html>
