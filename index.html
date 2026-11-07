@@ -72,7 +72,7 @@ header{top:22px;left:26px;gap:18px}.sig{border-color:#a38b68;color:#d8c6a3;backg
 @media(max-width:700px){header{left:12px;top:12px}.brand{font-size:14px;letter-spacing:3px}#stats{right:9px;top:9px;min-width:112px;padding:8px;font-size:8px}#mmo-quests{right:8px;top:92px;width:160px;padding:9px}#mmo-map{right:8px;bottom:145px;width:104px;height:104px}#mmo-chat{left:8px;bottom:90px;width:185px;height:74px;font-size:10px}#hud{left:8px;bottom:8px;width:48vw}.orb{width:42px;height:42px}#skillbar{right:8px;bottom:8px;left:auto;transform:none;gap:4px}.skill{width:39px;height:42px;font-size:15px}#lootpanel{display:none}#mmo-location{left:12px;top:58px;font-size:8px}#mmo-bottomhint{display:none}.panel{padding:35px 22px}}
 
 #overlay{overflow:auto;padding:24px;background:radial-gradient(ellipse at 50% 35%,#25202aee,#050609f7)}.select-shell{width:min(1120px,96vw);max-height:94vh;overflow:auto;padding:26px 28px;border:1px solid #887354;background:linear-gradient(145deg,#17151bf2,#08090df5);box-shadow:0 0 90px #000;text-align:center}.select-shell .title{font-size:clamp(34px,5vw,54px);margin:4px 0}.select-intro{font-size:17px;color:#bdb2a6;margin:8px auto 20px}.class-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;text-align:left}.class-card{min-width:0;padding:15px 12px;border:1px solid #51483e;background:linear-gradient(160deg,#201d23,#0d0d12);color:#e8dfd3;cursor:pointer;text-align:left;transition:.18s}.class-card:hover,.class-card.selected{border-color:#d0b17b;transform:translateY(-3px);box-shadow:0 8px 28px #0009,0 0 18px #b18a4a22}.class-card.selected{background:linear-gradient(160deg,#33282a,#111016)}.class-icon{font-size:30px;margin-bottom:8px}.class-card h3{font:600 14px Cinzel;letter-spacing:1px;color:#e4d0aa;margin:0 0 7px}.class-card p{font-size:13px;line-height:1.35;color:#aaa19a;min-height:52px;margin:0 0 10px}.class-stats{font:10px Cinzel;line-height:1.9;color:#c8b99f}.class-detail{min-height:62px;margin:15px auto 12px;padding:12px;border-top:1px solid #504535;border-bottom:1px solid #504535;color:#c7b9a6;font-size:14px}.class-detail b{color:#e0c28f;font-family:Cinzel}.select-shell .btn:disabled{opacity:.45;cursor:not-allowed}@media(max-width:850px){.class-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.class-card p{min-height:0}}@media(max-width:480px){.class-grid{grid-template-columns:1fr}.select-shell{padding:18px 14px}}
-</style>
+.skill .cost{position:absolute;right:4px;top:3px;font:8px Cinzel;color:#d7c79f;letter-spacing:.2px}.skill.low-resource{border-color:#8b4a4f;opacity:.55;filter:grayscale(.6)}</style>
 </head>
 <body>
 <canvas id="game"></canvas><div class="vignette"></div><div id="model-status">VESPER · MODEL YÜKLENİYOR</div>
@@ -183,7 +183,7 @@ const abilityDefs={
  frostwitch:[["BUZ MIZRAĞI","Uzak menzile buz büyüsü fırlat",3.5,12],["AYAZ PATLAMASI","Çevrendeki düşmanları buzla vur",7,22],["KIŞ SIÇRAYIŞI","Güvenli mesafeye ışınlan",8,18],["SONSUZ KIŞ","Geniş alana yoğun buz büyüsü yağdır",16,50]],
  plaguewarden:[["VEBA İĞNESİ","Öndeki düşmanlara çürüme bulaştır",4,10],["ÇÜRÜME AŞISI","Can yenile ve zehirli aura oluştur",9,18],["SALGIN YAYILIMI","Yakın düşmanlara zincirleme çürüme yay",10,22],["KARA VEBA","Çevrendeki tüm düşmanlara ağır çürüme hasarı",17,48]]
 };
-function updateSkillHud(){const defs=abilityDefs[selectedClass]||abilityDefs.vesper;['q','e','r','f'].forEach((k,i)=>{const el=ui('skill'+k.toUpperCase()),cd=skillCD[k];el.dataset.name=defs[i][0];el.title=defs[i][0]+' — '+defs[i][1]+' · Bekleme: '+defs[i][2]+' sn · Öz: '+(defs[i][3]||0)+' '+(classDefs[selectedClass]||classDefs.vesper).resourceName;el.classList.toggle('cool',cd>0);el.querySelector('small').textContent=cd>0?cd.toFixed(1)+'s':'Hazır';el.querySelector('span')?.remove()})}
+function updateSkillHud(){const defs=abilityDefs[selectedClass]||abilityDefs.vesper;['q','e','r','f'].forEach((k,i)=>{const el=ui('skill'+k.toUpperCase()),cd=skillCD[k],cost=defs[i][3]||0;el.dataset.name=defs[i][0];el.title=defs[i][0]+' — '+defs[i][1]+' · Bekleme: '+defs[i][2]+' sn · Maliyet: '+cost+' '+(classDefs[selectedClass]||classDefs.vesper).resourceName;el.classList.toggle('cool',cd>0);el.classList.toggle('low-resource',!!player&&player.resource<cost);el.querySelector('small').textContent=cd>0?cd.toFixed(1)+'s':'Hazır';let costEl=el.querySelector('.cost');if(!costEl){costEl=document.createElement('span');costEl.className='cost';el.appendChild(costEl)}costEl.textContent=cost+' Öz'})}
 function useSkill(key){
  if(!gameOn||skillCD[key]>0)return;
  const a=aimAngle(),tx=Math.sin(a),tz=Math.cos(a),cls=selectedClass||'vesper',idx=['q','e','r','f'].indexOf(key),def=(abilityDefs[cls]||abilityDefs.vesper)[idx],base=player.damage;let hits=0;
@@ -191,26 +191,26 @@ function useSkill(key){
  const cone=(range,width,m,color)=>enemies.forEach(e=>{const dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),ang=Math.atan2(dx,dy),diff=Math.atan2(Math.sin(ang-a),Math.cos(ang-a));if(d<range+e.r&&Math.abs(diff)<width)hurt(e,m,color)});
  const circle=(range,m,color)=>enemies.forEach(e=>{if(dist(e,player)<range+e.r)hurt(e,m,color)});
  const line=(range,m,color)=>{const seen=new Set();for(let n=1;n<=10;n++){const px=player.x+tx*n*range/10,pz=player.y+tz*n*range/10;enemies.forEach(e=>{if(!seen.has(e)&&Math.hypot(e.x-px,e.y-pz)<1.65){seen.add(e);hurt(e,m,color)}})}};
- const dashTo=(distance,color)=>{player.x=clamp(player.x+tx*distance,-208,208);player.y=clamp(player.y+tz*distance,-208,208);player.inv=Math.max(player.inv,.65);dash=.65;skillEffect(player.x,player.y,color,3.6);particle(player.x,player.y,'#d5eaff',25,180)};
+ const dashTo=(distance,color,m=0,width=1.45,hitColor='#d5eaff')=>{const sx=player.x,sy=player.y,ex=clamp(sx+tx*distance,-208,208),ey=clamp(sy+tz*distance,-208,208),vx=ex-sx,vy=ey-sy,len2=vx*vx+vy*vy||1;if(m>0)enemies.forEach(e=>{const t=clamp(((e.x-sx)*vx+(e.y-sy)*vy)/len2,0,1),px=sx+vx*t,py=sy+vy*t;if(Math.hypot(e.x-px,e.y-py)<width+e.r)hurt(e,m,hitColor)});player.x=ex;player.y=ey;player.inv=Math.max(player.inv,.65);dash=.65;skillEffect(sx,sy,color,2.4);skillEffect(ex,ey,color,3.6);particle(sx,sy,'#d5eaff',14,130);particle(ex,ey,'#d5eaff',25,180)};
  const heal=n=>{player.hp=Math.min(player.maxHp,player.hp+n);particle(player.x,player.y,'#a6e8c1',18,100)};
  const cost=def[3]||0;if(player.resource<cost){say(player.resourceName.toUpperCase()+' YETERSİZ  ·  '+cost+' GEREKİYOR');return}player.resource-=cost;
  const cd=def[2];skillCD[key]=cd;attackAnimTime=selectedClass==='vesper'?.46:attackAnimDuration;if(playerModelReady){const atk=Object.keys(playerActions).find(n=>/attack|slash/i.test(n));if(atk)choosePlayerAction(atk,.08)}
  if(cls==='vesper'){
   if(key==='q'){cone(8,1.3,2.5,'#b9eaff');skillEffect(player.x+tx*2,player.y+tz*2,0xa9e8ff,6)}
-  if(key==='e'){dashTo(5,0x9b8aff);cone(4.5,1.05,1.9,'#c6b4ff')}
+  if(key==='e'){dashTo(5,0x9b8aff,1.9,1.45,'#c6b4ff')}
   if(key==='r'){dashTo(7,0x72cfff);heal(8)}
   if(key==='f'){circle(9,2.7,'#d8c0ff');skillEffect(player.x,player.y,0xb99cff,10);particle(player.x,player.y,'#d0b7ff',48,240)}
  }
  if(cls==='templar'){
   if(key==='q'){cone(5.5,1.15,2.0,'#ffe2a6');skillEffect(player.x+tx*1.5,player.y+tz*1.5,0xffdf9b,4.8)}
   if(key==='e'){heal(30);player.inv=Math.max(player.inv,1.35);skillEffect(player.x,player.y,0xffe7ad,4.5)}
-  if(key==='r'){dashTo(6,0xffd98a);cone(4,1.3,2.2,'#ffe5b0')}
+  if(key==='r'){dashTo(6,0xffd98a,2.2,1.5,'#ffe5b0')}
   if(key==='f'){circle(8,2.15,'#ffe1a1');heal(18);skillEffect(player.x,player.y,0xffd98a,9)}
  }
  if(cls==='bloodknight'){
   if(key==='q'){cone(5.8,1.0,3.0,'#d94e59');skillEffect(player.x+tx*1.5,player.y+tz*1.5,0xb92e43,5)}
   if(key==='e'){circle(6,1.65,'#c83248');heal(hits*7+5);particle(player.x,player.y,'#c83248',24,150)}
-  if(key==='r'){dashTo(7,0xa51e36);line(5,1.9,'#e64d58')}
+  if(key==='r'){dashTo(7,0xa51e36,1.9,1.45,'#e64d58')}
   if(key==='f'){circle(9,3.6,'#d51f3b');player.hp=Math.max(1,player.hp-12);skillEffect(player.x,player.y,0xc51e38,10)}
  }
  if(cls==='frostwitch'){
