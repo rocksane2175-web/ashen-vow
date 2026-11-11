@@ -72,13 +72,14 @@ header{top:22px;left:26px;gap:18px}.sig{border-color:#a38b68;color:#d8c6a3;backg
 @media(max-width:700px){header{left:12px;top:12px}.brand{font-size:14px;letter-spacing:3px}#stats{right:9px;top:9px;min-width:112px;padding:8px;font-size:8px}#mmo-quests{right:8px;top:92px;width:160px;padding:9px}#mmo-map{right:8px;bottom:145px;width:104px;height:104px}#mmo-chat{left:8px;bottom:90px;width:185px;height:74px;font-size:10px}#hud{left:8px;bottom:8px;width:48vw}.orb{width:42px;height:42px}#skillbar{right:8px;bottom:8px;left:auto;transform:none;gap:4px}.skill{width:39px;height:42px;font-size:15px}#lootpanel{display:none}#mmo-location{left:12px;top:58px;font-size:8px}#mmo-bottomhint{display:none}.panel{padding:35px 22px}}
 
 #overlay{overflow:auto;padding:24px;background:radial-gradient(ellipse at 50% 35%,#25202aee,#050609f7)}.select-shell{width:min(1120px,96vw);max-height:94vh;overflow:auto;padding:26px 28px;border:1px solid #887354;background:linear-gradient(145deg,#17151bf2,#08090df5);box-shadow:0 0 90px #000;text-align:center}.select-shell .title{font-size:clamp(34px,5vw,54px);margin:4px 0}.select-intro{font-size:17px;color:#bdb2a6;margin:8px auto 20px}.class-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;text-align:left}.class-card{min-width:0;padding:15px 12px;border:1px solid #51483e;background:linear-gradient(160deg,#201d23,#0d0d12);color:#e8dfd3;cursor:pointer;text-align:left;transition:.18s}.class-card:hover,.class-card.selected{border-color:#d0b17b;transform:translateY(-3px);box-shadow:0 8px 28px #0009,0 0 18px #b18a4a22}.class-card.selected{background:linear-gradient(160deg,#33282a,#111016)}.class-icon{font-size:30px;margin-bottom:8px}.class-card h3{font:600 14px Cinzel;letter-spacing:1px;color:#e4d0aa;margin:0 0 7px}.class-card p{font-size:13px;line-height:1.35;color:#aaa19a;min-height:52px;margin:0 0 10px}.class-stats{font:10px Cinzel;line-height:1.9;color:#c8b99f}.class-detail{min-height:62px;margin:15px auto 12px;padding:12px;border-top:1px solid #504535;border-bottom:1px solid #504535;color:#c7b9a6;font-size:14px}.class-detail b{color:#e0c28f;font-family:Cinzel}.select-shell .btn:disabled{opacity:.45;cursor:not-allowed}@media(max-width:850px){.class-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.class-card p{min-height:0}}@media(max-width:480px){.class-grid{grid-template-columns:1fr}.select-shell{padding:18px 14px}}
-.skill .cost{position:absolute;right:4px;top:3px;font:8px Cinzel;color:#d7c79f;letter-spacing:.2px}.skill.low-resource{border-color:#8b4a4f;opacity:.55;filter:grayscale(.6)}</style>
+.skill .cost{position:absolute;right:4px;top:3px;font:8px Cinzel;color:#d7c79f;letter-spacing:.2px}.skill.low-resource{border-color:#8b4a4f;opacity:.55;filter:grayscale(.6)}#skillbar .skill{pointer-events:auto;cursor:help}#skillbar .skill:focus-visible{outline:1px solid #d7bd8c;outline-offset:3px}
+</style>
 </head>
 <body>
 <canvas id="game"></canvas><div class="vignette"></div><div id="model-status">VESPER · MODEL YÜKLENİYOR</div>
 <header><div class="sig"><span>✠</span></div><div><div class="brand">ASHEN VOW</div><div class="sub">THE SILENT PENANCE</div></div></header>
 <div id="stats">LEVEL <span id="lv">1</span><br>SOULS <span id="kills">0</span><br>WAVE <span id="wave">1</span></div>
-<div id="help"><kbd>W A S D</kbd> Hareket &nbsp; <kbd>FARE</kbd> Normal saldırı<br><kbd>Q E R F</kbd> Sınıfa özel yetenekler · <kbd>SPACE</kbd> Kaçınma</div><div id="skillbar"><div class="skill" id="skillQ" data-name="KÜL HİLALİ"><b>Q</b>✦<small>Hazır</small></div><div class="skill" id="skillE" data-name="RUH YARILMASI"><b>E</b>❖<small>Hazır</small></div><div class="skill" id="skillR" data-name="GÖLGE ADIMI"><b>R</b>◈<small>Hazır</small></div><div class="skill" id="skillF" data-name="SON AĞIT"><b>F</b>✧<small>Hazır</small></div></div>
+<div id="help"><kbd>W A S D</kbd> Hareket &nbsp; <kbd>FARE</kbd> Normal saldırı<br><kbd>Q E R F</kbd> Sınıfa özel yetenekler · <kbd>SPACE</kbd> Kaçınma</div><div id="skillbar"><div class="skill" tabindex="0" role="img" id="skillQ" data-name="KÜL HİLALİ"><b>Q</b>✦<small>Hazır</small></div><div class="skill" tabindex="0" role="img" id="skillE" data-name="RUH YARILMASI"><b>E</b>❖<small>Hazır</small></div><div class="skill" tabindex="0" role="img" id="skillR" data-name="GÖLGE ADIMI"><b>R</b>◈<small>Hazır</small></div><div class="skill" tabindex="0" role="img" id="skillF" data-name="SON AĞIT"><b>F</b>✧<small>Hazır</small></div></div>
 <div id="mmo-location">THE FROSTBOUND CATHEDRAL <span>/ ASHEN FRONTIER</span></div><section id="mmo-quests"><h3>✦ JOURNAL / GÖREVLER</h3><div class="quest-title">Küllerin Arındırılması</div><div class="quest-copy">Katedral avlusundaki lanetlileri temizle.</div><div class="quest-progress"><span id="questfill"></span></div><div class="quest-copy" id="questcount">0 / 12 düşman</div><div class="quest-title" style="margin-top:12px">Kayıp Rahibenin Mührü</div><div class="quest-copy">Piskoposun düşürdüğü emaneti bul.</div><div class="quest-copy" id="questboss">Durum: İz sürülüyor</div></section><canvas id="mmo-map" width="150" height="150"></canvas><div id="mmo-chat"><strong>WORLD / YAKIN SOHBET</strong><div id="mmo-chatlog">[Sistem] Katedral sınırına hoş geldin.<br>[Rehber] Ayazın içindeki ışığı takip et.</div></div><div id="mmo-bottomhint">WASD HAREKET · SOL TIK SALDIRI · SPACE KAÇIN · Q E R F YETENEKLER · I ENVANTER</div><div id="message"></div><div id="lootnotice"></div><div id="bossbar"><div id="bossname">THE HOLLOW BISHOP</div><div id="bosshp"><div id="bosshpfill"></div></div></div><div id="lootpanel"><h3>RELIQUAR / GANİMET</h3><div id="lootlist">Henüz ganimet yok.</div></div>
 <div id="hud"><div class="bars"><div class="orb" id="hpOrb">♥</div><div class="meterbox"><div class="meterlabel"><span>VITALITY</span><span id="hpText">100 / 100</span></div><div class="meter"><div class="fill hp" id="hpFill"></div></div><div class="meterlabel" style="margin-top:8px"><span>SOUL EXPERIENCE</span><span id="xpText">0 / 100</span></div><div class="meter"><div class="fill xp" id="xpFill" style="width:0%"></div></div><div class="meterlabel" style="margin-top:8px"><span id="resourceName">KÜL</span><span id="resourceText">100 / 100</span></div><div class="meter"><div class="fill" id="resourceFill" style="width:100%;background:#c2a8e8"></div></div></div><div class="orb blue" id="classOrb">☾</div></div></div>
 <div id="overlay"><div class="select-shell"><div class="eyebrow">CHOOSE YOUR PENANCE</div><div class="title">ASHEN VOW</div><p class="select-intro">Bir sınıf seç. Her sınıf farklı özellikler, başlangıç ekipmanları ve savaş tarzıyla başlar.</p><div id="class-grid"></div><div class="class-detail" id="class-detail"></div><button class="btn" id="start" disabled>ÖNCE BİR SINIF SEÇ</button><div class="small">WASD hareket · Fare saldırı · SPACE kaçınma · Q / E / R / F yetenekleri</div></div></div>
@@ -183,7 +184,53 @@ const abilityDefs={
  frostwitch:[["BUZ MIZRAĞI","Uzak menzile buz büyüsü fırlat",3.5,12],["AYAZ PATLAMASI","Çevrendeki düşmanları buzla vur",7,22],["KIŞ SIÇRAYIŞI","Güvenli mesafeye ışınlan",8,18],["SONSUZ KIŞ","Geniş alana yoğun buz büyüsü yağdır",16,50]],
  plaguewarden:[["VEBA İĞNESİ","Öndeki düşmanlara çürüme bulaştır",4,10],["ÇÜRÜME AŞISI","Can yenile ve zehirli aura oluştur",9,18],["SALGIN YAYILIMI","Yakın düşmanlara zincirleme çürüme yay",10,22],["KARA VEBA","Çevrendeki tüm düşmanlara ağır çürüme hasarı",17,48]]
 };
-function updateSkillHud(){const defs=abilityDefs[selectedClass]||abilityDefs.vesper;['q','e','r','f'].forEach((k,i)=>{const el=ui('skill'+k.toUpperCase()),cd=skillCD[k],cost=defs[i][3]||0;el.dataset.name=defs[i][0];el.title=defs[i][0]+' — '+defs[i][1]+' · Bekleme: '+defs[i][2]+' sn · Maliyet: '+cost+' '+(classDefs[selectedClass]||classDefs.vesper).resourceName;el.classList.toggle('cool',cd>0);el.classList.toggle('low-resource',!!player&&player.resource<cost);el.querySelector('small').textContent=cd>0?cd.toFixed(1)+'s':'Hazır';let costEl=el.querySelector('.cost');if(!costEl){costEl=document.createElement('span');costEl.className='cost';el.appendChild(costEl)}costEl.textContent=cost+' Öz'})}
+const abilityHudDetails={
+ vesper:{
+  q:{damage:'2.5× güç',range:'8 m · geniş koni',effect:'Kül enerjili tırpan darbesi'},
+  e:{damage:'1.9× güç',range:'5 m ileri hat · 1.45 m genişlik',effect:'İleri yarılma ve yol üzerindeki hedeflere hasar'},
+  r:{damage:'Hasar vermez',range:'7 m sıçrama',effect:'0.65 sn dokunulmazlık ve 8 CAN iyileşme'},
+  f:{damage:'2.7× güç',range:'9 m çevre',effect:'Geniş ruh patlaması'}
+ },
+ templar:{
+  q:{damage:'2.0× güç',range:'5.5 m · ön koni',effect:'Kutsal darbe'},
+  e:{damage:'Hasar vermez',range:'Kendine',effect:'30 CAN iyileşme ve 1.35 sn dokunulmazlık'},
+  r:{damage:'2.2× güç',range:'6 m ileri hat · 1.5 m genişlik',effect:'Muhafız hücumu ve çarpışma hasarı'},
+  f:{damage:'2.15× güç',range:'8 m çevre',effect:'18 CAN iyileşme ve kutsal alan darbesi'}
+ },
+ bloodknight:{
+  q:{damage:'3.0× güç',range:'5.8 m · ön koni',effect:'Ağır kanlı kılıç darbesi'},
+  e:{damage:'1.65× güç',range:'6 m çevre',effect:'Her isabette 7 CAN + 5 CAN iyileşme'},
+  r:{damage:'1.9× güç',range:'7 m ileri hat · 1.45 m genişlik',effect:'Kızıl hücum ve yol hasarı'},
+  f:{damage:'3.6× güç',range:'9 m çevre',effect:'12 CAN bedeli; can 1’in altına düşmez'}
+ },
+ frostwitch:{
+  q:{damage:'2.35× güç',range:'12 m düz hat',effect:'1.8 sn yavaşlatma'},
+  e:{damage:'1.9× güç',range:'6.5 m çevre',effect:'1.8 sn yavaşlatma'},
+  r:{damage:'Hasar vermez',range:'8 m sıçrama',effect:'Güvenli mesafeye ışınlanma ve 0.65 sn dokunulmazlık'},
+  f:{damage:'3.1× güç',range:'11 m çevre',effect:'3.2 sn güçlü yavaşlatma'}
+ },
+ plaguewarden:{
+  q:{damage:'1.8× güç',range:'7 m · ön koni',effect:'3.6 sn zehir; saniyede gücün %18’i'},
+  e:{damage:'1.05× güç',range:'5 m çevre',effect:'22 CAN iyileşme ve 3.6 sn zehir'},
+  r:{damage:'2.0× güç',range:'7.5 m çevre',effect:'İsabet başına 2 CAN iyileşme ve 3.6 sn zehir'},
+  f:{damage:'3.25× güç',range:'10 m çevre',effect:'5 sn zehir; saniyede gücün %28’i'}
+ }
+};
+function updateSkillHud(){
+ const defs=abilityDefs[selectedClass]||abilityDefs.vesper,details=abilityHudDetails[selectedClass]||abilityHudDetails.vesper;
+ ['q','e','r','f'].forEach((k,i)=>{
+  const el=ui('skill'+k.toUpperCase()),cd=skillCD[k],cost=defs[i][3]||0,meta=details[k]||{};
+  el.dataset.name=defs[i][0];
+  el.title=defs[i][0]+' — '+defs[i][1]+'\nHasar: '+(meta.damage||'—')+' · Menzil: '+(meta.range||'—')+'\nEtki: '+(meta.effect||'—')+'\nBekleme: '+defs[i][2]+' sn · Maliyet: '+cost+' '+(classDefs[selectedClass]||classDefs.vesper).resourceName;
+  el.setAttribute('aria-label',el.title);
+  el.classList.toggle('cool',cd>0);
+  el.classList.toggle('low-resource',!!player&&player.resource<cost);
+  el.querySelector('small').textContent=cd>0?cd.toFixed(1)+'s':'Hazır';
+  let costEl=el.querySelector('.cost');
+  if(!costEl){costEl=document.createElement('span');costEl.className='cost';el.appendChild(costEl)}
+  costEl.textContent=cost+' Öz';
+ });
+}
 function useSkill(key){
  if(!gameOn||skillCD[key]>0)return;
  const a=aimAngle(),tx=Math.sin(a),tz=Math.cos(a),cls=selectedClass||'vesper',idx=['q','e','r','f'].indexOf(key),def=(abilityDefs[cls]||abilityDefs.vesper)[idx],base=player.damage;let hits=0;
@@ -361,7 +408,7 @@ function loadHero(){
   let hand=null;model.traverse(o=>{if(o.isBone&&/right.?hand|hand.?r/i.test(o.name))hand=o});
   buildClassAppearance();
   status.textContent='3D KARAKTER HAZIR';setTimeout(()=>status.style.opacity='0',2600);
- },undefined,err=>{console.error('Hero GLB load failed',err);status.textContent='3D MODEL AĞDAN YÜKLENEMEDİ · YEDEK MODEL AKTİF';});
+ },undefined,err=>{console.error('Hero GLB load failed',err);const fallback=makeWarrior(false,true);if(fallback.userData&&fallback.userData.weaponPivot)fallback.userData.weaponPivot.visible=false;playerModel.add(fallback);playerModelReady=true;buildClassAppearance();status.textContent='YEDEK 3D KARAKTER AKTİF';status.style.opacity='1';});
 }
 loadHero();
 function enemyModel(e){let m=makeWarrior(!!e.boss,false);m.scale.setScalar(e.boss?1.7:.8);if(e.kind==='wraith')m.traverse(o=>{if(o.isMesh&&o.material)o.material=o.material.clone(),o.material.transparent=true,o.material.opacity=.68});scene.add(m);return m}
