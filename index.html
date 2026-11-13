@@ -73,6 +73,7 @@ header{top:22px;left:26px;gap:18px}.sig{border-color:#a38b68;color:#d8c6a3;backg
 
 #overlay{overflow:auto;padding:24px;background:radial-gradient(ellipse at 50% 35%,#25202aee,#050609f7)}.select-shell{width:min(1120px,96vw);max-height:94vh;overflow:auto;padding:26px 28px;border:1px solid #887354;background:linear-gradient(145deg,#17151bf2,#08090df5);box-shadow:0 0 90px #000;text-align:center}.select-shell .title{font-size:clamp(34px,5vw,54px);margin:4px 0}.select-intro{font-size:17px;color:#bdb2a6;margin:8px auto 20px}.class-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;text-align:left}.class-card{min-width:0;padding:15px 12px;border:1px solid #51483e;background:linear-gradient(160deg,#201d23,#0d0d12);color:#e8dfd3;cursor:pointer;text-align:left;transition:.18s}.class-card:hover,.class-card.selected{border-color:#d0b17b;transform:translateY(-3px);box-shadow:0 8px 28px #0009,0 0 18px #b18a4a22}.class-card.selected{background:linear-gradient(160deg,#33282a,#111016)}.class-icon{font-size:30px;margin-bottom:8px}.class-card h3{font:600 14px Cinzel;letter-spacing:1px;color:#e4d0aa;margin:0 0 7px}.class-card p{font-size:13px;line-height:1.35;color:#aaa19a;min-height:52px;margin:0 0 10px}.class-stats{font:10px Cinzel;line-height:1.9;color:#c8b99f}.class-detail{min-height:62px;margin:15px auto 12px;padding:12px;border-top:1px solid #504535;border-bottom:1px solid #504535;color:#c7b9a6;font-size:14px}.class-detail b{color:#e0c28f;font-family:Cinzel}.select-shell .btn:disabled{opacity:.45;cursor:not-allowed}@media(max-width:850px){.class-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.class-card p{min-height:0}}@media(max-width:480px){.class-grid{grid-template-columns:1fr}.select-shell{padding:18px 14px}}
 .skill .cost{position:absolute;right:4px;top:3px;font:8px Cinzel;color:#d7c79f;letter-spacing:.2px}.skill.low-resource{border-color:#8b4a4f;opacity:.55;filter:grayscale(.6)}#skillbar .skill{pointer-events:auto;cursor:help}#skillbar .skill:focus-visible{outline:1px solid #d7bd8c;outline-offset:3px}
+.skill{--cooldown-progress:0;background:conic-gradient(from -90deg,rgba(0,0,0,.78) calc(var(--cooldown-progress)*1turn),transparent 0),linear-gradient(145deg,#1e222cee,#06090ff5)}
 </style>
 </head>
 <body>
@@ -229,6 +230,10 @@ function updateSkillHud(){
   let costEl=el.querySelector('.cost');
   if(!costEl){costEl=document.createElement('span');costEl.className='cost';el.appendChild(costEl)}
   costEl.textContent=cost+' Öz';
+  const cooldownProgress=defs[i][2]>0?Math.max(0,Math.min(1,cd/defs[i][2])):0;
+  el.style.setProperty('--cooldown-progress',cooldownProgress.toFixed(4));
+  el.dataset.cooldownProgress=cooldownProgress.toFixed(3);
+  el.setAttribute('aria-label',el.title+' · Kalan: '+(cd>0?cd.toFixed(1)+' sn':'Hazır'));
  });
 }
 function useSkill(key){
