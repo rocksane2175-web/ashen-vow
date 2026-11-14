@@ -219,6 +219,7 @@ const abilityHudDetails={
 };
 function updateSkillHud(){
  const defs=abilityDefs[selectedClass]||abilityDefs.vesper,details=abilityHudDetails[selectedClass]||abilityHudDetails.vesper;
+ const resourceName=(classDefs[selectedClass]||classDefs.vesper).resourceName;
  ['q','e','r','f'].forEach((k,i)=>{
   const el=ui('skill'+k.toUpperCase()),cd=skillCD[k],cost=defs[i][3]||0,meta=details[k]||{};
   el.dataset.name=defs[i][0];
@@ -229,7 +230,7 @@ function updateSkillHud(){
   el.querySelector('small').textContent=cd>0?cd.toFixed(1)+'s':'Hazır';
   let costEl=el.querySelector('.cost');
   if(!costEl){costEl=document.createElement('span');costEl.className='cost';el.appendChild(costEl)}
-  costEl.textContent=cost+' Öz';
+  costEl.textContent=cost+' '+resourceName;
   const cooldownProgress=defs[i][2]>0?Math.max(0,Math.min(1,cd/defs[i][2])):0;
   el.style.setProperty('--cooldown-progress',cooldownProgress.toFixed(4));
   el.dataset.cooldownProgress=cooldownProgress.toFixed(3);
@@ -244,7 +245,8 @@ function useSkill(key){
  const circle=(range,m,color)=>enemies.forEach(e=>{if(dist(e,player)<range+e.r)hurt(e,m,color)});
  const line=(range,m,color)=>{const seen=new Set();for(let n=1;n<=10;n++){const px=player.x+tx*n*range/10,pz=player.y+tz*n*range/10;enemies.forEach(e=>{if(!seen.has(e)&&Math.hypot(e.x-px,e.y-pz)<1.65){seen.add(e);hurt(e,m,color)}})}};
  const dashTo=(distance,color,m=0,width=1.45,hitColor='#d5eaff')=>{const sx=player.x,sy=player.y,ex=clamp(sx+tx*distance,-208,208),ey=clamp(sy+tz*distance,-208,208),vx=ex-sx,vy=ey-sy,len2=vx*vx+vy*vy||1;if(m>0)enemies.forEach(e=>{const t=clamp(((e.x-sx)*vx+(e.y-sy)*vy)/len2,0,1),px=sx+vx*t,py=sy+vy*t;if(Math.hypot(e.x-px,e.y-py)<width+e.r)hurt(e,m,hitColor)});player.x=ex;player.y=ey;player.inv=Math.max(player.inv,.65);dash=.65;skillEffect(sx,sy,color,2.4);skillEffect(ex,ey,color,3.6);particle(sx,sy,'#d5eaff',14,130);particle(ex,ey,'#d5eaff',25,180)};
- const heal=n=>{player.hp=Math.min(player.maxHp,player.hp+n);particle(player.x,player.y,'#a6e8c1',18,100)};
+ const healVisuals={vesper:{particle:'#c9b3ff',hex:0xb99cff},templar:{particle:'#ffe4a6',hex:0xffdf9b},bloodknight:{particle:'#ed6877',hex:0xd94b62},frostwitch:{particle:'#a9f1ff',hex:0x8beaff},plaguewarden:{particle:'#b2dc86',hex:0x9acb76}};
+ const heal=n=>{player.hp=Math.min(player.maxHp,player.hp+n);const fx=healVisuals[cls]||healVisuals.vesper;particle(player.x,player.y,fx.particle,18,100);skillEffect(player.x,player.y,fx.hex,2.6)};
  const cost=def[3]||0;if(player.resource<cost){say(player.resourceName.toUpperCase()+' YETERSİZ  ·  '+cost+' GEREKİYOR');return}player.resource-=cost;
  const cd=def[2];skillCD[key]=cd;skillAnimClass=cls;skillAnimKey=key;const motionDuration=skillMotionDurations[cls]?.[key]||attackAnimDuration;attackAnimTime=motionDuration;skillAnimTime=Math.max(skillAnimTime,motionDuration);if(playerModelReady){const atk=Object.keys(playerActions).find(n=>/attack|slash|gesture|cast/i.test(n));if(atk)choosePlayerAction(atk,.08,true)}
  if(cls==='vesper'){
