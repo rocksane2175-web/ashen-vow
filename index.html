@@ -188,20 +188,20 @@ const abilityDefs={
 const abilityHudDetails={
  vesper:{
   q:{damage:'2.5× güç',range:'8 m · geniş koni',effect:'Kül enerjili tırpan darbesi'},
-  e:{damage:'1.9× güç',range:'5 m ileri hat · 1.45 m genişlik',effect:'İleri yarılma ve yol üzerindeki hedeflere hasar'},
+  e:{damage:'1.9× güç',range:'5 m ileri hat · 1.45 m genişlik',effect:'İleri yarılma, yol hasarı ve 0.65 sn dokunulmazlık'},
   r:{damage:'Hasar vermez',range:'7 m sıçrama',effect:'0.65 sn dokunulmazlık ve 8 CAN iyileşme'},
   f:{damage:'2.7× güç',range:'9 m çevre',effect:'Geniş ruh patlaması'}
  },
  templar:{
   q:{damage:'2.0× güç',range:'5.5 m · ön koni',effect:'Kutsal darbe'},
   e:{damage:'Hasar vermez',range:'Kendine',effect:'30 CAN iyileşme ve 1.35 sn dokunulmazlık'},
-  r:{damage:'2.2× güç',range:'6 m ileri hat · 1.5 m genişlik',effect:'Muhafız hücumu ve çarpışma hasarı'},
+  r:{damage:'2.2× güç',range:'6 m ileri hat · 1.5 m genişlik',effect:'Muhafız hücumu, yol hasarı ve 0.65 sn dokunulmazlık'},
   f:{damage:'2.15× güç',range:'8 m çevre',effect:'18 CAN iyileşme ve kutsal alan darbesi'}
  },
  bloodknight:{
   q:{damage:'3.0× güç',range:'5.8 m · ön koni',effect:'Ağır kanlı kılıç darbesi'},
   e:{damage:'1.65× güç',range:'6 m çevre',effect:'İsabet başına 7 CAN + kullanım başına 5 CAN iyileşme'},
-  r:{damage:'1.9× güç',range:'7 m ileri hat · 1.45 m genişlik',effect:'Kızıl hücum ve yol hasarı'},
+  r:{damage:'1.9× güç',range:'7 m ileri hat · 1.45 m genişlik',effect:'Kızıl hücum, yol hasarı ve 0.65 sn dokunulmazlık'},
   f:{damage:'3.6× güç',range:'9 m çevre',effect:'12 CAN bedeli; can 1’in altına düşmez'}
  },
  frostwitch:{
@@ -244,11 +244,11 @@ function useSkill(key){
  const cone=(range,width,m,color)=>enemies.forEach(e=>{const dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),ang=Math.atan2(dx,dy),diff=Math.atan2(Math.sin(ang-a),Math.cos(ang-a));if(d<range+e.r&&Math.abs(diff)<width)hurt(e,m,color)});
  const circle=(range,m,color)=>enemies.forEach(e=>{if(dist(e,player)<range+e.r)hurt(e,m,color)});
  const line=(range,m,color)=>{const seen=new Set();for(let n=1;n<=10;n++){const px=player.x+tx*n*range/10,pz=player.y+tz*n*range/10;enemies.forEach(e=>{if(!seen.has(e)&&Math.hypot(e.x-px,e.y-pz)<1.65){seen.add(e);hurt(e,m,color)}})}};
- const dashTo=(distance,color,m=0,width=1.45,hitColor='#d5eaff')=>{const sx=player.x,sy=player.y,ex=clamp(sx+tx*distance,-208,208),ey=clamp(sy+tz*distance,-208,208),vx=ex-sx,vy=ey-sy,len2=vx*vx+vy*vy||1;if(m>0)enemies.forEach(e=>{const t=clamp(((e.x-sx)*vx+(e.y-sy)*vy)/len2,0,1),px=sx+vx*t,py=sy+vy*t;if(Math.hypot(e.x-px,e.y-py)<width+e.r)hurt(e,m,hitColor)});player.x=ex;player.y=ey;player.inv=Math.max(player.inv,.65);dash=.65;skillEffect(sx,sy,color,2.4);skillEffect(ex,ey,color,3.6);particle(sx,sy,'#d5eaff',14,130);particle(ex,ey,'#d5eaff',25,180)};
+ const dashTo=(distance,color,m=0,width=1.45,hitColor='#d5eaff')=>{const sx=player.x,sy=player.y,ex=clamp(sx+tx*distance,-208,208),ey=clamp(sy+tz*distance,-208,208),vx=ex-sx,vy=ey-sy,len2=vx*vx+vy*vy||1;if(m>0)enemies.forEach(e=>{const t=clamp(((e.x-sx)*vx+(e.y-sy)*vy)/len2,0,1),px=sx+vx*t,py=sy+vy*t;if(Math.hypot(e.x-px,e.y-py)<width+e.r)hurt(e,m,hitColor)});player.x=ex;player.y=ey;player.inv=Math.max(player.inv,.65);dash=.65;skillEffect(sx,sy,color,2.4);skillEffect(ex,ey,color,3.6);const trailColor=typeof color==='number'?'#'+color.toString(16).padStart(6,'0'):color;particle(sx,sy,trailColor,14,130);particle(ex,ey,trailColor,25,180)};
  const healVisuals={vesper:{particle:'#c9b3ff',hex:0xb99cff},templar:{particle:'#ffe4a6',hex:0xffdf9b},bloodknight:{particle:'#ed6877',hex:0xd94b62},frostwitch:{particle:'#a9f1ff',hex:0x8beaff},plaguewarden:{particle:'#b2dc86',hex:0x9acb76}};
  const heal=n=>{player.hp=Math.min(player.maxHp,player.hp+n);const fx=healVisuals[cls]||healVisuals.vesper;particle(player.x,player.y,fx.particle,18,100);skillEffect(player.x,player.y,fx.hex,2.6)};
  const cost=def[3]||0;if(player.resource<cost){say(player.resourceName.toUpperCase()+' YETERSİZ  ·  '+cost+' GEREKİYOR');return}player.resource-=cost;
- const cd=def[2];skillCD[key]=cd;skillAnimClass=cls;skillAnimKey=key;const motionDuration=skillMotionDurations[cls]?.[key]||attackAnimDuration;attackAnimTime=motionDuration;skillAnimTime=Math.max(skillAnimTime,motionDuration);if(playerModelReady){const atk=Object.keys(playerActions).find(n=>/attack|slash|gesture|cast/i.test(n));if(atk)choosePlayerAction(atk,.08,true)}
+ const cd=def[2];skillCD[key]=cd;skillAnimClass=cls;skillAnimKey=key;const motionDuration=skillMotionDurations[cls]?.[key]||attackAnimDuration;attackAnimTime=motionDuration;skillAnimTime=Math.max(skillAnimTime,motionDuration);if(playerModelReady)playSkillAnimation(cls,key);
  if(cls==='vesper'){
   if(key==='q'){cone(8,1.3,2.5,'#b9eaff');skillEffect(player.x+tx*2,player.y+tz*2,0xa9e8ff,6)}
   if(key==='e'){dashTo(5,0x9b8aff,1.9,1.45,'#c6b4ff')}
@@ -429,6 +429,14 @@ const skillWeaponMotions={
  plaguewarden:{q:[0,.55,-.15,1.25,.15],e:[.25,.45,.25,.75,.7],r:[-.15,.9,.45,1.4,1],f:[-.25,1.2,.5,1.8,1.25]}
 };
 const skillMotionDurations={vesper:{q:.56,e:.62,r:.5,f:.82},templar:{q:.66,e:.58,r:.72,f:.82},bloodknight:{q:.7,e:.58,r:.72,f:.86},frostwitch:{q:.5,e:.72,r:.5,f:.88},plaguewarden:{q:.56,e:.74,r:.72,f:.88}};
+const skillAnimationHints={
+ vesper:{q:[/scythe|sweep|slash/i,/attack/i],e:[/dash|charge|run/i,/slash|attack/i],r:[/blink|teleport|evade/i,/cast|gesture/i],f:[/spell|cast|power/i,/attack|slash/i]},
+ templar:{q:[/sword|slash|attack/i],e:[/block|guard|defend|heal/i,/cast/i],r:[/charge|dash|run/i,/attack/i],f:[/holy|judgment|smite|cast|power/i,/attack|slash/i]},
+ bloodknight:{q:[/heavy|greatsword|slash|attack/i],e:[/drain|siphon|heal|cast/i],r:[/charge|dash|run/i,/attack/i],f:[/slam|heavy|power|attack/i]},
+ frostwitch:{q:[/ice|throw|cast|spell/i],e:[/aoe|cast|spell|magic/i],r:[/blink|teleport|dash/i,/cast/i],f:[/frost|ice|cast|spell|power/i]},
+ plaguewarden:{q:[/throw|poison|cast|spell/i],e:[/heal|aura|cast|spell/i],r:[/sweep|slash|attack|cast/i],f:[/poison|plague|cast|spell|power/i]}
+};
+function playSkillAnimation(cls,key){const names=Object.keys(playerActions),hints=skillAnimationHints[cls]?.[key]||[];let clip=null;for(const hint of hints){clip=names.find(name=>hint.test(name));if(clip)break}if(!clip)clip=names.find(name=>/attack|slash|gesture|cast/i.test(name));if(clip)choosePlayerAction(clip,.08,true)}
 function draw(dt){frameDelta=dt;
  if(!player)return;
  const target=new THREE.Vector3(player.x,1.55,player.y);
