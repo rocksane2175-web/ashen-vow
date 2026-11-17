@@ -436,7 +436,21 @@ const skillAnimationHints={
  frostwitch:{q:[/ice|throw|cast|spell/i],e:[/aoe|cast|spell|magic/i],r:[/blink|teleport|dash/i,/cast/i],f:[/frost|ice|cast|spell|power/i]},
  plaguewarden:{q:[/throw|poison|cast|spell/i],e:[/heal|aura|cast|spell/i],r:[/sweep|slash|attack|cast/i],f:[/poison|plague|cast|spell|power/i]}
 };
-function playSkillAnimation(cls,key){const names=Object.keys(playerActions),hints=skillAnimationHints[cls]?.[key]||[];let clip=null;for(const hint of hints){clip=names.find(name=>hint.test(name));if(clip)break}if(!clip)clip=names.find(name=>/attack|slash|gesture|cast/i.test(name));if(clip)choosePlayerAction(clip,.08,true)}
+function playSkillAnimation(cls,key){
+ const names=Object.keys(playerActions),hints=skillAnimationHints[cls]?.[key]||[];
+ let clip=null;
+ for(const hint of hints){clip=names.find(name=>hint.test(name));if(clip)break}
+ if(!clip)clip=names.find(name=>/attack|slash|gesture|cast/i.test(name));
+ if(!clip)return false;
+ const action=playerActions[clip],motionDuration=skillMotionDurations[cls]?.[key]||attackAnimDuration;
+ choosePlayerAction(clip,.08,true);
+ if(!action)return false;
+ const clipDuration=action.getClip().duration;
+ action.setLoop(THREE.LoopOnce,1);
+ action.clampWhenFinished=true;
+ if(Number.isFinite(clipDuration)&&clipDuration>0&&motionDuration>0)action.setEffectiveTimeScale(clipDuration/motionDuration);
+ return true;
+}
 function draw(dt){frameDelta=dt;
  if(!player)return;
  const target=new THREE.Vector3(player.x,1.55,player.y);
