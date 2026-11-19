@@ -238,7 +238,8 @@ function updateSkillHud(){
  });
 }
 function useSkill(key){
- if(!gameOn||skillCD[key]>0)return;
+ // Keep basic attacks and class skills on one action timeline; overlapping inputs overwrite the active weapon/GLB motion.
+ if(!gameOn||skillCD[key]>0||attack>0||attackAnimTime>0||skillAnimTime>0)return;
  const a=aimAngle(),tx=Math.sin(a),tz=Math.cos(a),cls=selectedClass||'vesper',idx=['q','e','r','f'].indexOf(key),def=(abilityDefs[cls]||abilityDefs.vesper)[idx],base=player.damage;let hits=0;
  const hurt=(e,m=1,color='#b9d8ee')=>{e.hp-=base*m;e.hit=.28;hits++;gainResource(player.resourceOnSkillHit||1);if(cls==='frostwitch'){const hadSlow=(e.slowTime||0)>0,nextSlow=key==='f'?.34:.58;e.slowTime=Math.max(e.slowTime||0,key==='f'?3.2:1.8);e.slowFactor=hadSlow?Math.min(e.slowFactor||1,nextSlow):nextSlow}if(cls==='plaguewarden'){e.poisonTime=Math.max(e.poisonTime||0,key==='f'?5:3.6);e.poisonDps=Math.max(e.poisonDps||0,base*(key==='f'?.28:.18));if(!Number.isFinite(e.poisonTick))e.poisonTick=0}particle(e.x,e.y,color,12,165)};
  const cone=(range,width,m,color)=>enemies.forEach(e=>{const dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy),ang=Math.atan2(dx,dy),diff=Math.atan2(Math.sin(ang-a),Math.cos(ang-a));if(d<range+e.r&&Math.abs(diff)<width)hurt(e,m,color)});
